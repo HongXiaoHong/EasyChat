@@ -1,0 +1,30 @@
+ListFrame 类
+
+对外方法
+	[1] void showList(Map<String,User> users);
+	[2] void showMessage(String socketId, String message);
+
+内部方法
+	[3] void appendToFile(String socketId, String msg);
+	[4] void proccessClick( MouseEvent e );
+	[5] DefaultTableModel makeModel();
+
+内部类
+	[1] class TableAdapter extends MouseAdapter;
+	[2] class FlashTask implements Runnable;
+	[3] class ImageRender implements TableCellRenderer;
+	
+成员变量
+	[1] Image emptyImg;      头像闪动(空白图像)
+	[2] Map<String,ChatFrame> chats;     存放聊天面板
+		每一个用户对应一个聊天面板
+		在什么时候来产生聊天面板, 稍后讨论。
+	[3] Map<String,FlashTask> fTasks;     头像闪动的任务。
+		当有消息过来, 就让用户的头像闪动。
+		当双击头像, 停止头像的闪动, 打开 ChatFrame。
+	[4] String path;  聊天记录存放
+	
+	
+	
+	
+	

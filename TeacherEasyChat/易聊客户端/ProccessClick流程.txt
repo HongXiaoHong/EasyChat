@@ -1,0 +1,52 @@
+proccessClick 流程设计
+	[1] 从 chats 中获取 ChatFrame
+	[2] 如果拿到 chat 则将焦点到 Chat 上。
+	   {true 的分支}
+	   [A1] 将焦点设置到对应的  ChatFrame 上面。
+	   {false 的分支}
+	   [B1] 如果拿不到 chat 对象:
+	   [B2] 如果头像有闪动, 则取消闪动。
+	   [B3] 将 task 的停止标志设置为  true。
+	   [B4] 从 Map 中移除 task ( 任务 )。
+	   [B5] 新建 ChatFrame 窗体。
+	   [B6] 调用 readMsgFromText 读取消息。	
+	   [B7] 将消息设置到 chatFrame 中。	
+	   [B8] 将 chatFrame 放入到 Map [chats] 中。 
+	   
+LinkedList<String[]> readMsgFromText(String targetId);
+	通过路径: x:\xxx\本方帐号\对方SocketId.txt 来读取文本。
+	      如: e:\dir\andy\socketId.txt 
+	转化成: LinkedList<String[]> 返回出去。
+	
+void appendToFile(String socketId, String msg);
+	将一条消息写入到文本。
+	格式: 昵称,消息,时间
+	以 e:\dir\ 为例, 本方的账号为: andy
+	[1] 先看 e:\dir\andy 是否存在, 不存在创建目录。
+	[2] 获取 socketId 所对应的用户昵称。
+	[4] 通过 getTime() 获取时间。
+	[3] 以追加形式写入文本。
+	
+void showMessage(String socketId, String message)	
+	[1] 从 chats(Map) 中获取 ChatFrame [用来判断窗体是否正在显示]。
+	[2] 利用 callBack 获取 User 对象。
+	[3] 获取 User 的昵称。
+	[4] 如果 ChatFrame 窗体正在显示。
+	[4]-1 则将消息显示在  ChatFrame 中。
+	[4]-2 否则
+	[4-3] 取  User 的头像 (Head)。			
+	[4-4] 看看对应的用户头像是否有闪动, 如果有无则  ---> 闪动头像, 以提示用户。
+	[4-5] 没有闪动。
+	[4-5] 创建闪动的作务
+	[4-6] 将任务放入 fTask {Map}
+	[4-7] 创建线程执行之。			
+	[4-8] 写入到文本。
+	
+String getTime();
+
+
+
+	
+
+	   
+

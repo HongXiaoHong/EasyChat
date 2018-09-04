@@ -1,0 +1,4 @@
+name:andy,pass:123,nickName:安迪,mark:安天王,img:1
+name:candy,pass:234,nickName:肯迪,mark:迪天王,img:2
+name:ken,pass:456,nickName:肯,mark:肯天王,img:3
+name:luby,pass:789,nickName:路比,mark:路比,img:4
