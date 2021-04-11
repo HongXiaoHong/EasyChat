@@ -32,7 +32,7 @@ public class ClientEngine
 	//[1] EngineCallBack 回调方法   -----------------------------------------------------
 	public void doLogin(User user){
 		if( socketId==null ){
-			socketId = work.startConnect("192.168.13.22", 8085);
+			socketId = work.startConnect("127.0.0.1", 1090);
 		}
 		String cmd = String.format("{op:login,user:{name:%s,pass:%s}}",
 				user.getName(), user.getPass() );
@@ -40,7 +40,7 @@ public class ClientEngine
 	}
 	public void doRegister(User user){
 		if( socketId==null ){
-			socketId = work.startConnect("127.0.0.1", 8085);
+			socketId = work.startConnect("127.0.0.1", 1090);
 		}
 		String cmd = String.format("{op:register,user:{%s}}", user.toString() );
 		work.send( socketId, cmd );
