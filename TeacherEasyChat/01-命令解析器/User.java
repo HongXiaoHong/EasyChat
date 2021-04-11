@@ -1,38 +1,68 @@
-package i.½âÎöÆ÷;
+package i.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;
 
 public class User {
 
-	public static final int LOGIN = 1;
-	public static final int REGISTER = 2;
-	
-	private String name;
-	private String pass;
-	private String nickName;
-	private String mark;
-	private String img;
-	private String socketId;
-	
-	public boolean equals(User user, int flag){
-		// ... [ ´ý¶¨ ] ...
-		return false;
-	}
+    public static final int LOGIN = 1;
+    public static final int REGISTER = 2;
 
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
-	
-	public String getPass() { return pass; }
-	public void setPass(String pass) { this.pass = pass; }
+    private String name;
+    private String pass;
+    private String nickName;
+    private String mark;
+    private String img;
+    private String socketId;
 
-	public String getNickName() { return nickName; }
-	public void setNickName(String nickName) { this.nickName = nickName; }
+    public boolean equals(User user, int flag) {
+        // ... [ ï¿½ï¿½ï¿½ï¿½ ] ...
+        return false;
+    }
 
-	public String getMark() { return mark; }
-	public void setMark(String mark) { this.mark = mark; }
+    public String getName() {
+        return name;
+    }
 
-	public String getImg() { return img; }
-	public void setImg(String img) { this.img = img; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getSocketId() { return socketId; }
-	public void setSocketId(String socketId) { this.socketId = socketId; }
-	
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getSocketId() {
+        return socketId;
+    }
+
+    public void setSocketId(String socketId) {
+        this.socketId = socketId;
+    }
+
 }

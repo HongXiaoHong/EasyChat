@@ -1,94 +1,92 @@
 package com.hong.view;
 
-import java.util.Vector;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
 import com.hong.model.User;
 import com.hong.utils.PathUtil;
 
-public class ServerFrame extends JFrame{
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.Vector;
 
-	JTable table ;
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+public class ServerFrame extends JFrame {
 
-		ServerFrame table = new ServerFrame();
-	}
-	
-	public ServerFrame(){
-		DefaultTableModel model = createTableModel();
-		createTable(model);
-	}
+    JTable table;
 
-	public void createTable(DefaultTableModel model){
-		table = new JTable(model);
-		//ÉèÖÃÐÐ¸ß
-		table.setRowHeight(50);
-		//ÉèÖÃ¹ö¶¯Ìõ
-		JScrollPane srcPane = new JScrollPane(table);
-		srcPane.setSize(450, 350);
-		add(srcPane);
-		
-		setBounds(150,150,500,450);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		String imagePath = PathUtil.getTxt("hong.jpg");
-		System.out.println(imagePath);
-		ImageIcon hong = new ImageIcon(imagePath);
-		setIconImage(hong.getImage());
-		setResizable(false);
-	}
-	
-	public DefaultTableModel createTableModel(){
-		Vector<Object> colNames = new Vector<Object>();
-		colNames.add("ÐòºÅ");
-		colNames.add("SocketId");
-		colNames.add("ÓÃ»§Ãû");
-		colNames.add("IPµØÖ·");
-		colNames.add("¶Ë¿ÚºÅ");
-		colNames.add("µÇÂ½Ê±¼ä");
-		return new DefaultTableModel( colNames , 0 );
-	}
-	
-	public void addUser(User user){
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		Vector<Object> data = new Vector<Object>();
-		int rowCount = model.getRowCount();//»ñÈ¡ÐÐÊý
-		data.add(rowCount+1);//ÐòºÅ
-		data.add(user.getSocketId());//socketId
-		data.add(user.getName());//ÓÃ»§Ãû
-		data.add(user.getIp());//ip
-		data.add(user.getPort());//port
-		data.add(user.getLoginTime());//dµÇÂ¼Ê±¼ä
-		model.addRow(data);//ÔÚÎ²²¿Ìí¼ÓÒ»ÐÐµ¥Ôª¸ñ
-		//table.updateUI();//Ë¢ÐÂÊý¾Ý£¬²»Ë¢ÐÂ£¬Êý¾Ý²»³öÀ´
-		
-	}
-	public void removeUser(User user){
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		int rowCount = model.getRowCount();
-		int columnCount = model.getColumnCount();
-		System.out.println("rowCount"+rowCount+"columnCount"+columnCount);
-		int rowNow = 0;
-		int columnNom = 0;
-		String temp =null;
-		for(;rowNow<rowCount;rowNow++){
-				temp = (String) model.getValueAt(rowNow, 1);
-				System.out.println("¡°µ±Ç°ÐÐÊýÎª¡°"+(rowNow+1)+"¡±Õâ¸öÓÃ»§µÄsocketIdÊÇ£º¡±"+temp);
-				if(user.getSocketId().equals(temp)){
-					model.removeRow(rowNow);//½«¸ÃÐÐÒÆ³ýµô
-					
-					break;
-				}
-		}
-	}
-	public void clearData(User user){
-		
-	}
+    public static void main(String[] args) {
+
+
+        ServerFrame table = new ServerFrame();
+    }
+
+    public ServerFrame() {
+        DefaultTableModel model = createTableModel();
+        createTable(model);
+    }
+
+    public void createTable(DefaultTableModel model) {
+        table = new JTable(model);
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½
+        table.setRowHeight(50);
+        //ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½
+        JScrollPane srcPane = new JScrollPane(table);
+        srcPane.setSize(450, 350);
+        add(srcPane);
+
+        setBounds(150, 150, 500, 450);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        String imagePath = PathUtil.getTxt("hong.jpg");
+        System.out.println(imagePath);
+        ImageIcon hong = new ImageIcon(imagePath);
+        setIconImage(hong.getImage());
+        setResizable(false);
+    }
+
+    public DefaultTableModel createTableModel() {
+        Vector<Object> colNames = new Vector<Object>();
+        colNames.add("ï¿½ï¿½ï¿½");
+        colNames.add("SocketId");
+        colNames.add("ï¿½Ã»ï¿½ï¿½ï¿½");
+        colNames.add("IPï¿½ï¿½Ö·");
+        colNames.add("ï¿½Ë¿Úºï¿½");
+        colNames.add("ï¿½ï¿½Â½Ê±ï¿½ï¿½");
+        return new DefaultTableModel(colNames, 0);
+    }
+
+    public void addUser(User user) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        Vector<Object> data = new Vector<Object>();
+        int rowCount = model.getRowCount();//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+        data.add(rowCount + 1);//ï¿½ï¿½ï¿½
+        data.add(user.getSocketId());//socketId
+        data.add(user.getName());//ï¿½Ã»ï¿½ï¿½ï¿½
+        data.add(user.getIp());//ip
+        data.add(user.getPort());//port
+        data.add(user.getLoginTime());//dï¿½ï¿½Â¼Ê±ï¿½ï¿½
+        model.addRow(data);//ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ðµï¿½Ôªï¿½ï¿½
+        //table.updateUI();//Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½Ë¢ï¿½Â£ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½
+
+    }
+
+    public void removeUser(User user) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int rowCount = model.getRowCount();
+        int columnCount = model.getColumnCount();
+        System.out.println("rowCount" + rowCount + "columnCount" + columnCount);
+        int rowNow = 0;
+        int columnNom = 0;
+        String temp = null;
+        for (; rowNow < rowCount; rowNow++) {
+            temp = (String) model.getValueAt(rowNow, 1);
+            System.out.println("ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½" + (rowNow + 1) + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½socketIdï¿½Ç£ï¿½ï¿½ï¿½" + temp);
+            if (user.getSocketId().equals(temp)) {
+                model.removeRow(rowNow);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½
+
+                break;
+            }
+        }
+    }
+
+    public void clearData(User user) {
+
+    }
 }

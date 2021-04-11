@@ -8,38 +8,38 @@ import com.gec.controller.EngineCallBack;
 
 
 public class ChatFrame extends AbstractChat {
-	
-	private String targetId;
-	private EngineCallBack callBack;
 
-	public ChatFrame(EngineCallBack cb, String nickName, String socketId) {
-		this.targetId = socketId;
-		this.callBack = cb;
-		setTitle("Óë"+ nickName +"½»Ì¸ÖÐ ...");
-		initViews();
-		setButtonEvents();
-	}
-	
-	protected void setButtonEvents(){
-		btnSend.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String myMsg = selfArea.getText();
-				selfArea.setText("");
-				addText("ÎÒ", myMsg);
-				callBack.doSend(targetId, myMsg);
-			}
-		} );
-	}
+    private String targetId;
+    private EngineCallBack callBack;
 
-	public void addText(String nickName, String message){
-		insertText( styDoc, nickName +"\n", "Style01" );
-		insertText( styDoc, message +"\n", "Style01" );
-	}
+    public ChatFrame(EngineCallBack cb, String nickName, String socketId) {
+        this.targetId = socketId;
+        this.callBack = cb;
+        setTitle("ï¿½ï¿½" + nickName + "ï¿½ï¿½Ì¸ï¿½ï¿½ ...");
+        initViews();
+        setButtonEvents();
+    }
 
-	public void setText(LinkedList<String[]> list) {
-		for(String[] arr : list ){
-			addText( arr[0], arr[1] );
-		}
-	}
+    protected void setButtonEvents() {
+        btnSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String myMsg = selfArea.getText();
+                selfArea.setText("");
+                addText("ï¿½ï¿½", myMsg);
+                callBack.doSend(targetId, myMsg);
+            }
+        });
+    }
+
+    public void addText(String nickName, String message) {
+        insertText(styDoc, nickName + "\n", "Style01");
+        insertText(styDoc, message + "\n", "Style01");
+    }
+
+    public void setText(LinkedList<String[]> list) {
+        for (String[] arr : list) {
+            addText(arr[0], arr[1]);
+        }
+    }
 }

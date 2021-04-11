@@ -6,42 +6,43 @@ import com.hong.utils.Command;
 
 public class UserController {
 
-	UserDao dao = new UserDao();
+    UserDao dao = new UserDao();
 
-	public Command regist(User user){
-		User u = dao.getUser(user, User.REGISTER);
-		if (u==null){
-			System.out.println("ÓÃ»§Ãû²»´æÔÚ£¬¿ÉÒÔ½øÐÐ×¢²á");
-			if(dao.regist(user))
-			return Command.makeUserReply("regist", "yes", user);
-		}else{
-			System.out.println("ÒÑ¾­ÓµÓÐ¸ÃÓÃ»§£¬ÇëÎðÖØ¸´×¢²á£¡£¡£¡");
-			return Command.makeUserReply("regist", "no", user);
-		}
-		return null;
-	}
-	public Command login(User user){
-		User u = dao.getUser(user, User.LOGIN);
-		if (u==null){
-			System.out.println("Ã»ÓÐ¸ÃÓÃ»§£¬Çë½øÐÐ×¢²á£¡£¡£¡");
-			return Command.makeUserReply("login", "no", user);
-		}else{
-			if (  u.getName().equals(user.getName()) 
-					&& u.getPass().equals(user.getPass())){
-				System.out.println("µÇÂ¼³É¹¦");
-				user.setNickname(u.getNickname());
-				user.setMark(u.getMark());
-				user.setImg(u.getImg());
-				return Command.makeUserReply("login", "yes", user);
-			}else {
-				System.out.println("µÇÂ¼Ê§°Ü");
-				return Command.makeUserReply("login", "no", user);
-			}
-		}
-	}
+    public Command regist(User user) {
+        User u = dao.getUser(user, User.REGISTER);
+        if (u == null) {
+            System.out.println("ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½×¢ï¿½ï¿½");
+            if (dao.regist(user))
+                return Command.makeUserReply("regist", "yes", user);
+        } else {
+            System.out.println("ï¿½Ñ¾ï¿½Óµï¿½Ð¸ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½×¢ï¿½á£¡ï¿½ï¿½ï¿½ï¿½");
+            return Command.makeUserReply("regist", "no", user);
+        }
+        return null;
+    }
+
+    public Command login(User user) {
+        User u = dao.getUser(user, User.LOGIN);
+        if (u == null) {
+            System.out.println("Ã»ï¿½Ð¸ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½á£¡ï¿½ï¿½ï¿½ï¿½");
+            return Command.makeUserReply("login", "no", user);
+        } else {
+            if (u.getName().equals(user.getName())
+                    && u.getPass().equals(user.getPass())) {
+                System.out.println("ï¿½ï¿½Â¼ï¿½É¹ï¿½");
+                user.setNickname(u.getNickname());
+                user.setMark(u.getMark());
+                user.setImg(u.getImg());
+                return Command.makeUserReply("login", "yes", user);
+            } else {
+                System.out.println("ï¿½ï¿½Â¼Ê§ï¿½ï¿½");
+                return Command.makeUserReply("login", "no", user);
+            }
+        }
+    }
 //	public static void main(String[] args) {
 //		UserController con = new UserController();
-//		String name = "Ë¹µÙ·Ò";
+//		String name = "Ë¹ï¿½Ù·ï¿½";
 //		String pass = "123456";
 //		User user = new User(name, pass);
 ///*		user.setNickname("");

@@ -10,159 +10,159 @@ import com.gec.model.User;
 
 public class CmdParser {
 
-	public static Command parseClientCommand(String line){
-		String regex = "\\{"+
-				"op:([^,]+),?"+
-				"([^:]+:\\{(.*)\\})?"+
-				"\\}";
-		Pattern pat = Pattern.compile(regex);
-		Matcher mat = pat.matcher(line);
-		Map<String,String> map = null;
-		Command command = null;
-		if( mat.matches() ){
-			String op = mat.group(1);
-			command = new Command( op, null );
-			switch( op ){
-				case "register":
-				case "login":
-				case "send":
-					map = parsetJson( mat.group(3) );   //½âÎö×é (3), ±ä³É [¼üÖµ¶Ô]¡£
-					command.data = map;
-				break;
-				case "getList":
-				break;
-			}
-		}
-		return command;
-	}
-	
-	//[2] ¸ø¿Í»§¶ËÓÃµÄ¡£
-	public static Command parseServerCommand(String line){
-		String regex = "\\{"+
-				"op:([^,]+),?"+
-				"(result:([^,]+),?)?"+
-				"([^:]+:\\{(.*)\\})?"+
-				"(list:\\[([^]]+)\\])?"+
-				"\\}";
-		Pattern pat = Pattern.compile(regex);
-		Matcher mat = pat.matcher(line);
-		Map<String,String> map = null;
-		Map<String,User> users = null;
-		Command command = null;
-		if( mat.matches() ){
-			String op = mat.group(1);
-			command = new Command( op, mat.group(3) );  //×é (3): "yes" / "no"
-			System.out.println( "[·þÎñÆ÷¶Ë] OP:"+ command.op );
-			System.out.println( "[·þÎñÆ÷¶Ë] result:"+ command.result );
-			switch( op ){
-				case "register":
-				case "login":
-				case "message":
-					map = parsetJson( mat.group(5) );   //½âÎö×é (5), ±ä³É [ ¼üÖµ¶Ô ]¡£
-					command.data = map;
-					System.out.println( command.data );
-				break;
-				case "getList":
-					users = splitList( mat.group(7) );
-					command.users = users;
-				break;
-			}
-		}
-		return command;
-	}
+    public static Command parseClientCommand(String line) {
+        String regex = "\\{" +
+                "op:([^,]+),?" +
+                "([^:]+:\\{(.*)\\})?" +
+                "\\}";
+        Pattern pat = Pattern.compile(regex);
+        Matcher mat = pat.matcher(line);
+        Map<String, String> map = null;
+        Command command = null;
+        if (mat.matches()) {
+            String op = mat.group(1);
+            command = new Command(op, null);
+            switch (op) {
+                case "register":
+                case "login":
+                case "send":
+                    map = parsetJson(mat.group(3));   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (3), ï¿½ï¿½ï¿½ [ï¿½ï¿½Öµï¿½ï¿½]ï¿½ï¿½
+                    command.data = map;
+                    break;
+                case "getList":
+                    break;
+            }
+        }
+        return command;
+    }
 
-	private static Map<String,User> splitList(String line){
-		String regex = "\\{([^}]+)\\},?";
-		Pattern pat = Pattern.compile( regex );
-		Matcher mat = pat.matcher( line );
-		Map<String,User> users = new LinkedHashMap<String,User>();   //±£´æÊÇ¶à¸ö User
-		Map<String,String> map = null;
-		User user = null;
-		while( mat.find() ){
-			map = parsetJson( mat.group(1) );        //Ò»¸ö User ÀïÃæµÄÊôÐÔ
-			user = makeUser( map );
-			users.put( user.getSocketId(), user );   //´æÈë   Map µ±ÖÐ
-		}
-		return users;   //·µ»ØÄÄÒ»¸ö Map
-	}
-	
-	public static User makeUser(Map<String,String> data){
-		User user = new User();
-		//[Note] ¸øÃ¿Ò»¸ö³ÉÔ±±äÁ¿¸³Öµ -------------------------
-		user.setName( data.get("name") );
-		user.setPass( data.get("pass") );
-		user.setNickName( data.get("nickName") );
-		user.setMark( data.get("mark") );
-		user.setSocketId( data.get("socketId") );
-		user.setImg( data.get("img") );
-		return user;
-	}
+    //[2] ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ÃµÄ¡ï¿½
+    public static Command parseServerCommand(String line) {
+        String regex = "\\{" +
+                "op:([^,]+),?" +
+                "(result:([^,]+),?)?" +
+                "([^:]+:\\{(.*)\\})?" +
+                "(list:\\[([^]]+)\\])?" +
+                "\\}";
+        Pattern pat = Pattern.compile(regex);
+        Matcher mat = pat.matcher(line);
+        Map<String, String> map = null;
+        Map<String, User> users = null;
+        Command command = null;
+        if (mat.matches()) {
+            String op = mat.group(1);
+            command = new Command(op, mat.group(3));  //ï¿½ï¿½ (3): "yes" / "no"
+            System.out.println("[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] OP:" + command.op);
+            System.out.println("[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] result:" + command.result);
+            switch (op) {
+                case "register":
+                case "login":
+                case "message":
+                    map = parsetJson(mat.group(5));   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (5), ï¿½ï¿½ï¿½ [ ï¿½ï¿½Öµï¿½ï¿½ ]ï¿½ï¿½
+                    command.data = map;
+                    System.out.println(command.data);
+                    break;
+                case "getList":
+                    users = splitList(mat.group(7));
+                    command.users = users;
+                    break;
+            }
+        }
+        return command;
+    }
 
-	public static Map<String,String> parsetJson(String line){
-		Map<String,String> data = new HashMap<String,String>();  // user:andy,pass:123
-		String regex = "([^:}{]+):([^,]+),?";
-		Pattern pat = Pattern.compile(regex);    //±àÒëÕýÔò±í´ïÊ½  Éú³É----> ÕýÔò±í´ïÊ½¶ÔÏó 
-		Matcher mat = pat.matcher( line );       //ÕýÔò±í´ïÊ½¶ÔÏó  µÃµ½Æ¥ÅäÆ÷
-		while( mat.find() ){
-			data.put(mat.group(1), mat.group(2));
-		}
-		return data;
-	}
-	
-	public static User getUserByLine(String line){
-		Map<String,String> data = parsetJson( line );
-		return makeUser( data );
-	}
-	
-	public static String makeUserList(Map<String,User> users){
-		StringBuffer sb = new StringBuffer("{op:getList,list:[");
-		for( String key : users.keySet() ){
-			User user = users.get( key );
-			sb.append( "{"+ user.toString() +"}," );
-		}
-		if( users.size() > 0 ){
-			sb.setLength( sb.length()-1 );
-		}
-		sb.append("]}");
-		return sb.toString();
-	}
+    private static Map<String, User> splitList(String line) {
+        String regex = "\\{([^}]+)\\},?";
+        Pattern pat = Pattern.compile(regex);
+        Matcher mat = pat.matcher(line);
+        Map<String, User> users = new LinkedHashMap<String, User>();   //ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ User
+        Map<String, String> map = null;
+        User user = null;
+        while (mat.find()) {
+            map = parsetJson(mat.group(1));        //Ò»ï¿½ï¿½ User ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            user = makeUser(map);
+            users.put(user.getSocketId(), user);   //ï¿½ï¿½ï¿½ï¿½   Map ï¿½ï¿½ï¿½ï¿½
+        }
+        return users;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Map
+    }
+
+    public static User makeUser(Map<String, String> data) {
+        User user = new User();
+        //[Note] ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ -------------------------
+        user.setName(data.get("name"));
+        user.setPass(data.get("pass"));
+        user.setNickName(data.get("nickName"));
+        user.setMark(data.get("mark"));
+        user.setSocketId(data.get("socketId"));
+        user.setImg(data.get("img"));
+        return user;
+    }
+
+    public static Map<String, String> parsetJson(String line) {
+        Map<String, String> data = new HashMap<String, String>();  // user:andy,pass:123
+        String regex = "([^:}{]+):([^,]+),?";
+        Pattern pat = Pattern.compile(regex);    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½  ï¿½ï¿½ï¿½ï¿½----> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        Matcher mat = pat.matcher(line);       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½  ï¿½Ãµï¿½Æ¥ï¿½ï¿½ï¿½ï¿½
+        while (mat.find()) {
+            data.put(mat.group(1), mat.group(2));
+        }
+        return data;
+    }
+
+    public static User getUserByLine(String line) {
+        Map<String, String> data = parsetJson(line);
+        return makeUser(data);
+    }
+
+    public static String makeUserList(Map<String, User> users) {
+        StringBuffer sb = new StringBuffer("{op:getList,list:[");
+        for (String key : users.keySet()) {
+            User user = users.get(key);
+            sb.append("{" + user.toString() + "},");
+        }
+        if (users.size() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
 
 }
 
-//[1] ²âÊÔ×¢²áµÄÇé¿ö¡£
+//[1] ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //String line = "{"+
 //  "op:register,"+
-//  "user:{name:andy,pass:123,nickName:·çÇåÑï,mark:ÈË½£ºÏÒ»,img:1}"+
+//  "user:{name:andy,pass:123,nickName:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,mark:ï¿½Ë½ï¿½ï¿½ï¿½Ò»,img:1}"+
 //  "}";
-//[2] ²âÊÔµÇÂ½µÄÇé¿ö¡£		
+//[2] ï¿½ï¿½ï¿½Ôµï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
 //String line = "{op:login,user:{name:andy,pass:123}}";
-//[3] »ñÈ¡ÓÃ»§ÁÐ±í¡£	
+//[3] ï¿½ï¿½È¡ï¿½Ã»ï¿½ï¿½Ð±ï¿½	
 //String line = "{op:getList}";
-//[4] ·¢ËÍÏûÏ¢¡£
-//String line = "{op:send,content:{msg:ÄãºÃÂð,target:socket001}}";
+//[4] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+//String line = "{op:send,content:{msg:ï¿½ï¿½ï¿½ï¿½ï¿½,target:socket001}}";
 //parseClientCommand( line );
 
 //---------------------------------------------------------------------------------------
 
-//[1] ×¢²á³É¹¦ [ ¿Í»§¶Ë½ÓÊÕ ]
+//[1] ×¢ï¿½ï¿½É¹ï¿½ [ ï¿½Í»ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ ]
 //String line = "{"+
 //	"op:register,result:yes,"+ 
-//	"user:{name:andy,pass:123,nickName:Å£Íõ,mark:Å£²»ÅÂ»¢,img:1}"+
+//	"user:{name:andy,pass:123,nickName:Å£ï¿½ï¿½,mark:Å£ï¿½ï¿½ï¿½Â»ï¿½,img:1}"+
 //	"}";
 
-//[2] ×¢²áÊ§°Ü  [ ¿Í»§¶Ë½ÓÊÕ ]
+//[2] ×¢ï¿½ï¿½Ê§ï¿½ï¿½  [ ï¿½Í»ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ ]
 //String line = "{"+
 //	"op:register,result:no,"+ 
 //	"user:{}"+
 //	"}";
 
-//[3] µÇÂ½³É¹¦  [ ¿Í»§¶Ë½ÓÊÕ ]
+//[3] ï¿½ï¿½Â½ï¿½É¹ï¿½  [ ï¿½Í»ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ ]
 //String line = "{"+
 //	"op:login,result:yes,"+
-//	"user:{user:andy, nickName:Å£¸ç, mark:Å£¶¿²»ÅÂ»¢,img:1,socketId:xxx}"+
+//	"user:{user:andy, nickName:Å£ï¿½ï¿½, mark:Å£ï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½,img:1,socketId:xxx}"+
 //	"}";
 
-//[4] µÇÂ½Ê§°Ü  [ ¿Í»§¶Ë½ÓÊÕ ] ( Ê¡ÂÔ )
+//[4] ï¿½ï¿½Â½Ê§ï¿½ï¿½  [ ï¿½Í»ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ ] ( Ê¡ï¿½ï¿½ )
 
 
 

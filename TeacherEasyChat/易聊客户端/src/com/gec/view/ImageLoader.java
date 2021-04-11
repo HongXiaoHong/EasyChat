@@ -7,24 +7,26 @@ import java.net.URLDecoder;
 import javax.swing.ImageIcon;
 
 public class ImageLoader {
-	public static String PATH;
-	static {
-		//[1] »ñÈ¡ images ËùÔÚÄ¿Â¼µÄÎïÀíÂ·¾¶¡£
-		ClassLoader loader = ImageLoader.class.getClassLoader();
-		URL url = loader.getResource("images");
-		String addr = url.toString();
-		try {
-			addr = URLDecoder.decode( addr, "UTF-8" );   //[PS] ¶ÔÂ·¾¶½øÐÐ½âÂë ..
-			addr = addr.replaceAll( "file:/", "" );
-			addr = addr.replace("/", "\\");
-			PATH = addr;
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-	}
-	//[1] ´´½¨ ImageIcon Í¼±ê
-	public static ImageIcon getImageIcon(String imgName){
-		return new ImageIcon( PATH +"\\"+ imgName );
-	}
+    public static String PATH;
+
+    static {
+        //[1] ï¿½ï¿½È¡ images ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
+        ClassLoader loader = ImageLoader.class.getClassLoader();
+        URL url = loader.getResource("images");
+        String addr = url.toString();
+        try {
+            addr = URLDecoder.decode(addr, "UTF-8");   //[PS] ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ï¿½ ..
+            addr = addr.replaceAll("file:/", "");
+            addr = addr.replace("/", "\\");
+            PATH = addr;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //[1] ï¿½ï¿½ï¿½ï¿½ ImageIcon Í¼ï¿½ï¿½
+    public static ImageIcon getImageIcon(String imgName) {
+        return new ImageIcon(PATH + "\\" + imgName);
+    }
 }
 

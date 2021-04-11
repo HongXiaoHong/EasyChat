@@ -12,73 +12,77 @@ import com.gec.model.User;
 
 public class ServerFrame extends JFrame {
 
-	JTable table;
-	public void createTable(DefaultTableModel model){
-		table = new JTable( model );
-		table.setRowHeight( 35 );      //ÉèÖÃËüµÄÐÐ¸ß ..
-		JTableHeader header = table.getTableHeader();
-		header.setResizingAllowed(false);
-		
-		//[2] °Ñ±í¸ñ·ÅÈë¹ö¶¯Ìõ
-		JScrollPane scrPane = new JScrollPane( table );
-		scrPane.setSize( 450, 350 );
-		//[3] ¼ÓÈëµ½ JFrame µ±ÖÐ ..
-		add( scrPane );
-	}
-	public void initFrame(int port){
-		setBounds( 150, 150, 500, 450 );
-		setResizable( false );
-		setVisible( true );
-		setTitle("Ò×ÁÄ·þÎñÆ÷  Port:"+ port);
-		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-	}
-	
-	//[PS] ´´½¨Êý¾ÝÄ£ÐÍ
-	public DefaultTableModel createTableModel(){
-		//[1] ×¼±¸ºÃ±íÍ·µÄÊý¾Ý
-		Vector<Object> colNames = new Vector<Object>();
-		colNames.add("ÐòºÅ");
-		colNames.add("SocketId");
-		colNames.add("ÓÃ»§Ãû");
-		colNames.add("IP µØÖ·");
-		colNames.add("¶Ë¿ÚºÅ");
-		colNames.add("µÇÂ½Ê±¼ä");
-		return new DefaultTableModel(colNames, 0){
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};	
-	}
-	
-	public void addUser( User user ){
-		//[1] »ñÈ¡±í¸ñµÄÊý¾ÝÄ£ÐÍ
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		
-		//[2] ´´½¨Ò»¸ö Vector ¼¯ºÏÀ´³ÐÔØÊý¾Ý [ Ò»ÐÐµÄÊý¾Ý ]
-		Vector<Object> data = new Vector<Object>();
-		int rowCnt = model.getRowCount();  //[PS] »ñÈ¡ÐÐÊý
-		data.add( rowCnt + 1 );            //[1] ÐòºÅ
-		data.add( user.getSocketId() );    //[2] SocketId
-		data.add( user.getName() );        //[3] ÓÃ»§Ãû Name
-		data.add( user.getIp() );          //[4] IP µØÖ·
-		data.add( user.getPort() );        //[5] ¶Ë¿ÚºÅ
-		data.add( user.getLoginTime() );   //[6] µÇÂ½Ê±¼ä
-		
-		model.addRow( data );       //[3] ÔÚÎ²²¿¼ÓÈëÒ»ÐÐµ¥Ôª¸ñ ..
-		//table.updateUI();         //[4] Ë¢ÐÂ±í¸ñµÄ½çÃæ ..
-	}
-	public void removeUser( User user ){
-		
-	}
-	public void clearData(){
-		
-	}
+    JTable table;
 
-	public ServerFrame(int port){
-		DefaultTableModel model = createTableModel();
-		createTable( model );
-		initFrame( port );
-	}
-	
+    public void createTable(DefaultTableModel model) {
+        table = new JTable(model);
+        table.setRowHeight(35);      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½ ..
+        JTableHeader header = table.getTableHeader();
+        header.setResizingAllowed(false);
+
+        //[2] ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        JScrollPane scrPane = new JScrollPane(table);
+        scrPane.setSize(450, 350);
+        //[3] ï¿½ï¿½ï¿½ëµ½ JFrame ï¿½ï¿½ï¿½ï¿½ ..
+        add(scrPane);
+    }
+
+    public void initFrame(int port) {
+        setBounds(150, 150, 500, 450);
+        setResizable(false);
+        setVisible(true);
+        setTitle("ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½  Port:" + port);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    //[PS] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+    public DefaultTableModel createTableModel() {
+        //[1] ×¼ï¿½ï¿½ï¿½Ã±ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Vector<Object> colNames = new Vector<Object>();
+        colNames.add("ï¿½ï¿½ï¿½");
+        colNames.add("SocketId");
+        colNames.add("ï¿½Ã»ï¿½ï¿½ï¿½");
+        colNames.add("IP ï¿½ï¿½Ö·");
+        colNames.add("ï¿½Ë¿Úºï¿½");
+        colNames.add("ï¿½ï¿½Â½Ê±ï¿½ï¿½");
+        return new DefaultTableModel(colNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    public void addUser(User user) {
+        //[1] ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        //[2] ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Vector ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [ Ò»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ ]
+        Vector<Object> data = new Vector<Object>();
+        int rowCnt = model.getRowCount();  //[PS] ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+        data.add(rowCnt + 1);            //[1] ï¿½ï¿½ï¿½
+        data.add(user.getSocketId());    //[2] SocketId
+        data.add(user.getName());        //[3] ï¿½Ã»ï¿½ï¿½ï¿½ Name
+        data.add(user.getIp());          //[4] IP ï¿½ï¿½Ö·
+        data.add(user.getPort());        //[5] ï¿½Ë¿Úºï¿½
+        data.add(user.getLoginTime());   //[6] ï¿½ï¿½Â½Ê±ï¿½ï¿½
+
+        model.addRow(data);       //[3] ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ðµï¿½Ôªï¿½ï¿½ ..
+        //table.updateUI();         //[4] Ë¢ï¿½Â±ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ ..
+    }
+
+    public void removeUser(User user) {
+
+    }
+
+    public void clearData() {
+
+    }
+
+    public ServerFrame(int port) {
+        DefaultTableModel model = createTableModel();
+        createTable(model);
+        initFrame(port);
+    }
+
 }

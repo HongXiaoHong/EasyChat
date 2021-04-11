@@ -2,15 +2,20 @@ package com.hong.utils;
 
 public interface MsgCallBack {
 
-	//´´½¨·þÎñÆ÷ÊÇ·ñ³É¹¦
-	void onCreateServer(boolean flag);
-	//µ±ÓÐ¿Í»§¶ËÁ¬½ÓÆðÀ´
-	void onAccepted();
-	//µ±·þÎñÆ÷³É¹¦»òÊÇÊ§°Ü
-	void OnConntextEvent(boolean flag);
-	//½ÓÊÜ¿Í·þ¶ËÐÅÏ¢
-	void onReveived(byte[] buff);
-	//½ÓÊÜÊý¾Ý·¢ÉúÒì³£
-	void onReveiveFailed();
-	void onReceived(byte[] buff, int count, String socketID);
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½É¹ï¿½
+    void onCreateServer(boolean flag);
+
+    //ï¿½ï¿½ï¿½Ð¿Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    void onAccepted();
+
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
+    void onConntextEvent(boolean flag);
+
+    //ï¿½ï¿½ï¿½Ü¿Í·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+    void onReveived(byte[] buff);
+
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ì³£
+    void onReveiveFailed();
+
+    void onReceived(byte[] buff, int count, String socketID);
 }

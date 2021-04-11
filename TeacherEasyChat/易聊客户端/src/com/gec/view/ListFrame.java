@@ -36,287 +36,295 @@ import com.gec.controller.EngineCallBack;
 import com.gec.model.User;
 
 public class ListFrame extends JFrame {
-	
-	ImageIcon selfHead;
-	JLabel selfNick;           //×ÔÒÑµÄêÇ³Æ
-	JLabel selfMark;           //×ÔÒÑµÄ¸öÐÔÇ©Ãû
-	JTable table;
-	
-	EngineCallBack callBack;   //Êµ¼Ê´«½øÀ´µÄÒýÓÃÊÇ: "ClientEngine"
-	
-	private Image emptyImg;                //[1] Í·ÏñÉÁ¶¯(¿Õ°×Í¼Ïñ)
-	private Map<String,ChatFrame> chats = new HashMap<String,ChatFrame>();   //[2] ´æ·ÅÁÄÌìÃæ°å
-		                                   //    Ã¿Ò»¸öÓÃ»§¶ÔÓ¦Ò»¸öÁÄÌìÃæ°å
-		                                   //    ÔÚÊ²Ã´Ê±ºòÀ´²úÉúÁÄÌìÃæ°å, ÉÔºóÌÖÂÛ¡£
-	
-	private Map<String,FlashTask> fTasks = new HashMap<String,FlashTask>();  //[3] Í·ÏñÉÁ¶¯µÄÈÎÎñ¡£
-		                                   //    µ±ÓÐÏûÏ¢¹ýÀ´, ¾ÍÈÃÓÃ»§µÄÍ·ÏñÉÁ¶¯¡£
-		                                   //    µ±Ë«»÷Í·Ïñ, Í£Ö¹Í·ÏñµÄÉÁ¶¯, ´ò¿ª ChatFrame¡£
-	private String path = "e:\\dir\\";     //[4] ÁÄÌì¼ÇÂ¼´æ·Å¡£
-	private String name;                   //[5] ±¾·½µÄÃû³Æ¡£
-	
-	//[1] °ÑÄã×Ô¼ºÍ¨¹ý User ´«Èë½øÀ´ ..
-	public ListFrame(EngineCallBack callBack, User user){
-		this.callBack = callBack;   //½ÓÊÕ  "ClientEngine" µÄÒýÓÃ¡£
-		this.name = user.getName();
-		this.emptyImg = ImageLoader.getImageIcon("empty.jpg").getImage();
-		
-		selfHead = ImageLoader.getImageIcon( "face"+ user.getImg() +".jpg" );
-		JLabel lblHead = new JLabel( selfHead );
-		lblHead.setBounds( 7, 7, 50, 50 );
-		
-		//[2] ÓÃÒ»¸öÈÝÆ÷À´×° Í·Ïñ, ¸÷ÖÖÐÅÏ¢ ...
-		JPanel banner = new JPanel( null );
-		banner.setBounds( 0, 0, 200, 65 );
-		banner.setBackground( new Color(0,105,165) );
-		banner.add( lblHead );
-		
-		setLayout( null );   //È¡ÏûÔ­ÓÐµÄ²¼¾Ö  ..
-		add( banner );
-		
-		//-----------------------------------------------------------------------
-		DefaultTableModel model = makeModel();
-		table = new JTable( model );
-		table.setRowHeight( 50 );
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.addMouseListener( new TableAdapter() );
-		
-		TableColumnModel col = table.getColumnModel();
-		
-		//[1] ÄÃµ½µÚ 0 ÁÐ, ÉèÖÃµ¥Ôª¸ñäÖÈ¾Æ÷¡£
-		col.getColumn(0).setCellRenderer( new ImageRender() );
-		
-		col.getColumn(0).setPreferredWidth( 55 );   //[1] µÚ 0 ÁÐ
-		col.getColumn(1).setPreferredWidth( 210 );  //[2] µÚ 1 ÁÐ
 
-		col.getColumn(2).setPreferredWidth(0);
-		col.getColumn(2).setMaxWidth(0);   //[1] ÈÃËüÒþ²Ø ..
-		col.getColumn(2).setMinWidth(0);   //[2] ÈÃËüÒþ²Ø ..
-		
-		table.setBounds( 0, 66, 220, 600 );
-		//table.setBackground( Color.DARK_GRAY );
-		add( table );
-		
-		//-----------------------------------------------------------------------
-		setBounds( 150, 150, 200, 750 );
-		setResizable( false );
-		setVisible( true );
-		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-	}
-	
-	public void showList(Map<String,User> users){
-		
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		model.setRowCount( 0 );   //[1] ÏÈÇå¿ÕÔ­±í¸ñµÄÊý¾Ý ..
-		//[2] µü´úËùÓÐÓÃ»§
-		Set<String> socketIds = users.keySet();
-		for( String socketId : socketIds ){
-			Vector<Object> rowData = new Vector<Object>();
-			
-			User user = users.get( socketId );
-			ImageIcon head = ImageLoader.getImageIcon( "face"+ user.getImg() +".jpg" );
-			user.setHead( head );   //ÉèÖÃÓÃ»§Í·Ïñ  ..
-			
-			rowData.add( head );    //µÚ 0 ÁÐ·ÅÈëÓÃ»§Í·Ïñ ..
-			rowData.add( user.getNickName() );    //µÚ 1 ÁÐ·ÅÈëÓÃ»§êÇ³Æ ..
-			rowData.add( socketId );
-			
-			model.addRow( rowData );   //¼ÓÈëµ½±í¸ñµÄÊý¾ÝÔ´ÖÐ  ..
-		}
-	}
-	
-	public void showMessage(String socketId, String message){
-//		[1] ´Ó chats(Map) ÖÐ»ñÈ¡ ChatFrame [ÓÃÀ´ÅÐ¶Ï´°ÌåÊÇ·ñÕýÔÚÏÔÊ¾]¡£
-		ChatFrame chatFrame = chats.get( socketId );		
-//		[2] ÀûÓÃ callBack »ñÈ¡  User ¶ÔÏó¡£
-		User user = callBack.getUser(socketId);		
-//		[3] »ñÈ¡ User µÄêÇ³Æ¡£
-		String nickName = (user!=null) ? user.getNickName() : "Î´ÖªÓÃ»§";
-		
-//		[4] Èç¹û ChatFrame ´°ÌåÕýÔÚÏÔÊ¾¡£
-		if( chatFrame!=null ){   //Ö¤Ã÷´°ÌåÕýÔÚÏÔÊ¾ ..
-			//[4]-1  Ôò½«ÏûÏ¢ÏÔÊ¾ÔÚ  ChatFrame ÖÐ¡£
-			chatFrame.addText( nickName, message );
-		}else{  //Èç¹û, ´°ÌåÃ»ÓÐÏÔÊ¾  ..
-			//[4-4] ¿´¿´¶ÔÓ¦µÄÓÃ»§Í·ÏñÊÇ·ñÓÐÉÁ¶¯, Èç¹ûÓÐÎÞÔò  ---> ÉÁ¶¯Í·Ïñ, ÒÔÌáÊ¾ÓÃ»§¡£
-			FlashTask task = fTasks.get( socketId );
-			if( task==null ){  //Èç¹û, ²»´æÔÚ  ---> È¥ÉÁ¶¯Í·Ïñ ..
-				task = new FlashTask( user.getHead() );   //´´½¨ÉÁ¶¯µÄ×÷Îñ
-				fTasks.put( socketId, task );  //½«ÈÎÎñ·ÅÈë fTask {Map}
-				Thread th = new Thread( task );
-				th.start();   //[4-7] ´´½¨Ïß³ÌÖ´ÐÐÖ® ..
-			}
-			appendToFile( socketId, message );   //[4-8] Ð´Èëµ½ÎÄ±¾ (appendToFile) ..
-		}
-	}
-	
-	//-------------------------- ¶ÔÄÚµÄ·½·¨ ----------------------------------
-	//¹¦ÄÜ: ½«Ò»ÌõÏûÏ¢Ð´Èëµ½ÎÄ±¾¡£
-	//¸ñÊ½: êÇ³Æ,ÏûÏ¢,Ê±¼ä
-	//ÒÔ e:\dir\ ÎªÀý, ±¾·½µÄÕËºÅÎª: andy
-	private void appendToFile(String socketId, String msg){ 
-		//[1] ÏÈ¿´ e:\dir\andy ÊÇ·ñ´æÔÚ, ²»´æÔÚ´´½¨Ä¿Â¼¡£
-		//path: Êý¾ÝÂ·¾¶, name: ±¾·½µÄÓÃ»§Ãû
-		File dir = new File(path + name);
-		if( !dir.exists() ){
-			dir.mkdirs();   //²»´æÔÚ´´½¨Ä¿Â¼ ..
-		}
-		//[2] »ñÈ¡ socketId Ëù¶ÔÓ¦µÄÓÃ»§êÇ³Æ¡£
-		User user = callBack.getUser(socketId);
-		String nickName = (user!=null) ? user.getNickName() : "Î´ÖªÓÃ»§";
-		String time = getTime();   //[4] Í¨¹ý getTime() »ñÈ¡Ê±¼ä¡£
-		
-		//[3] ÒÔ×·¼ÓÐÎÊ½Ð´ÈëÎÄ±¾¡£
-		PrintWriter writer = null;
-		File file = new File(dir, socketId +".txt");
-		try {
-			writer = new PrintWriter( new FileWriter( file, true ) );
-			writer.printf( "%s,%s,%s\n", nickName, msg, time );  //êÇ³Æ,ÏûÏ¢,Ê±¼ä
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			writer.close();
-		}
-	}
-	
-	public String getTime(){
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		return sdf.format(date);
-	}
-	
-	//[Note] ´¦ÀíË«»÷ÊÂ¼þ  .. 
-	private void proccessClick(MouseEvent e){
-		Point point = e.getPoint();
-		int rowIndex = table.rowAtPoint( point );
-		
-		String nickName = (String)table.getModel().getValueAt(rowIndex, 1);
-		String socketId = (String)table.getModel().getValueAt(rowIndex, 2);
-		
-		//[1] ´Ó chats ÖÐ»ñÈ¡ ChatFrame
-		ChatFrame chatFrame = chats.get( socketId );
-		if( chatFrame!=null ){   //[2] Èç¹ûÄÃµ½  chat Ôò½«½¹µãµ½ Chat ÉÏ¡£
-			      //[A1] chatFrame  ÏÔÊ¾µ½×ÀÃæµÄ×îÉÏ·½ ¡£
-		}else{    //[B1] --> [ELSE] Èç¹ûÄÃ²»µ½ chat ¶ÔÏó¡£
-			FlashTask task = fTasks.get( socketId );
-			if( task!=null ){               //[B2] Èç¹ûÍ·ÏñÓÐÉÁ¶¯, ÔòÈ¡ÏûÉÁ¶¯¡£
-				task.stop = true;           //[B3] ½« task µÄÍ£Ö¹±êÖ¾ÉèÖÃÎª  true ¡£
-				fTasks.remove( socketId );  //[B4] ´Ó Map ÖÐÒÆ³ý task ( ÈÎÎñ )¡£
-			}
-			//[B5] ÐÂ½¨ ChatFrame ´°Ìå, CallBack: ClientEngine
-			chatFrame = new ChatFrame( callBack, nickName, socketId );
-			//[B6] µ÷ÓÃ  readMsgFromText ¶ÁÈ¡ÏûÏ¢¡£
-			LinkedList<String[]> list = readMsgFromText( socketId );
-			//[B7] ½«ÏûÏ¢ÉèÖÃµ½ chatFrame ÖÐ¡£
-			chatFrame.setText( list );
-			//[B8] ½« chatFrame ·ÅÈëµ½ Map [chats] ÖÐ¡£ 
-			chats.put( socketId, chatFrame );
-		}
-	}
+    ImageIcon selfHead;
+    JLabel selfNick;           //ï¿½ï¿½ï¿½Ñµï¿½ï¿½Ç³ï¿½
+    JLabel selfMark;           //ï¿½ï¿½ï¿½ÑµÄ¸ï¿½ï¿½ï¿½Ç©ï¿½ï¿½
+    JTable table;
 
-	//path = e:\dir\
-	//name = andy
-	//socketId.txt
-	private LinkedList<String[]> readMsgFromText(String targetId){
-		//[1] ÍêÕûµÄÂ·¾¶: 
-		String _path = String.format("%s%s\\%s.txt", path, name, targetId);
-		File file = new File( _path );
-		LinkedList<String[]> list = new LinkedList<String[]>();
-		if( file.exists() ){   //[2] ÎÄ¼þ´æÔÚ, ÔòÈ¥¶ÁÈ¡Êý¾Ý ..
-			BufferedReader reader = null;
-			String line = null;
-			try {
-				reader = new BufferedReader( new FileReader(_path) );
-				String[] arr = null;
-				while( (line=reader.readLine())!=null ){
-					arr = line.split(",");
-					list.add( arr );
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally{
-				if( reader!=null ){
-					try { reader.close(); }
-					catch (IOException e) { }
-				}
-			}
-		}
-		return list;
-	}
-	
-	//--------------------------- ÄÚ²¿ÀàµÄÇøÓò ---------------------------------
-	class ImageRender implements TableCellRenderer {
-		@Override
-		public Component getTableCellRendererComponent(JTable table, 
-				Object imgIcon, boolean isSelected, 
-				boolean hasFocus, int row, int column) {
-			ImageIcon icon = (ImageIcon)imgIcon;
-			JLabel label = new JLabel( icon );
-			return label;
-		}
-	}
-	
-	//[ÄÚ²¿Àà1] ±àÐ´Ò»¸öÄÚ²¿Àà TableAdapter
-	class TableAdapter extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if( e.getClickCount()==2 ){
-				proccessClick( e );
-			}
-		}
-	}
-	class FlashTask implements Runnable {
-		//[1] ±£´æÓÃ»§µÄÍ¼±ê¶ÔÏó
-		ImageIcon head;
-		//[2] stop ±êÖ¾Á¿, ÓÃÀ´Í£Ö¹Í·ÏñµÄÉÁË¸ ..
-		boolean stop = false;
-		public FlashTask( ImageIcon head ){
-			this.head = head;
-		}
-		@Override
-		public void run() {
-			Image srcImg = head.getImage();   //[1] Ô­Í¼ÏñÊý¾Ý ..
-			boolean flag = true;
-			while( !stop ){
-				if( flag ){
-					head.setImage( emptyImg );
-					flag = false;
-				}else{
-					head.setImage( srcImg );
-					flag = true;
-				}
-				delay();
-				table.updateUI();
-			}
-			head.setImage( srcImg );    //[2] ¼Ç×¡, ÉèÖÃ»ØÔ­±¾µÄÍ·Ïñ ..
-		}
-		private void delay(){
-			try{ Thread.sleep(250); }
-			catch(Exception e){}
-		}
-	}
-	
-	//--------------------------- ÄÚ²¿ÀàµÄÇøÓò [END] ---------------------------------
-	
-	//--------------------------- ÄÚ²¿ÀàµÄÇøÓò ---------------------------------
-	public DefaultTableModel makeModel(){
-		//[1] ´´½¨±íÍ·  [Table Header] ..
-		Vector<Object> headers = new Vector<Object>();
-		headers.add( "ÓÃ»§Í·Ïñ" );
-		headers.add( "ÓÃ»§êÇ³Æ" );
-		headers.add( "SocketId" );
-		return new DefaultTableModel(headers, 0){
-			//[PS] °Ñµ¥Ôª¸ñµÄ±à¼­¹¦ÄÜÈ¥µô, ±ÜÃâË«»÷Ê±, µ¥Ôª¸ñµÄ±à¼­×´Ì¬±»¼¤»î¡£
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-	}
+    EngineCallBack callBack;   //Êµï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: "ClientEngine"
 
-	public void removeChatFrame(String socketId) {
-		//[1] ´Ó Map [chats] ÖÐÒÆ³ý  ChatFrame ¡£
-		chats.remove( socketId );
-	}
+    private Image emptyImg;                //[1] Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Õ°ï¿½Í¼ï¿½ï¿½)
+    private Map<String, ChatFrame> chats = new HashMap<String, ChatFrame>();   //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //    Ã¿Ò»ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ó¦Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //    ï¿½ï¿½Ê²Ã´Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Ôºï¿½ï¿½ï¿½ï¿½Û¡ï¿½
+
+    private Map<String, FlashTask> fTasks = new HashMap<String, FlashTask>();  //[3] Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //    ï¿½ï¿½Ë«ï¿½ï¿½Í·ï¿½ï¿½, Í£Ö¹Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ChatFrameï¿½ï¿½
+    private String path = "e:\\dir\\";     //[4] ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Å¡ï¿½
+    private String name;                   //[5] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½
+
+    //[1] ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½Í¨ï¿½ï¿½ User ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ..
+    public ListFrame(EngineCallBack callBack, User user) {
+        this.callBack = callBack;   //ï¿½ï¿½ï¿½ï¿½  "ClientEngine" ï¿½ï¿½ï¿½ï¿½ï¿½Ã¡ï¿½
+        this.name = user.getName();
+        this.emptyImg = ImageLoader.getImageIcon("empty.jpg").getImage();
+
+        selfHead = ImageLoader.getImageIcon("face" + user.getImg() + ".jpg");
+        JLabel lblHead = new JLabel(selfHead);
+        lblHead.setBounds(7, 7, 50, 50);
+
+        //[2] ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×° Í·ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ ...
+        JPanel banner = new JPanel(null);
+        banner.setBounds(0, 0, 200, 65);
+        banner.setBackground(new Color(0, 105, 165));
+        banner.add(lblHead);
+
+        setLayout(null);   //È¡ï¿½ï¿½Ô­ï¿½ÐµÄ²ï¿½ï¿½ï¿½  ..
+        add(banner);
+
+        //-----------------------------------------------------------------------
+        DefaultTableModel model = makeModel();
+        table = new JTable(model);
+        table.setRowHeight(50);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.addMouseListener(new TableAdapter());
+
+        TableColumnModel col = table.getColumnModel();
+
+        //[1] ï¿½Ãµï¿½ï¿½ï¿½ 0 ï¿½ï¿½, ï¿½ï¿½ï¿½Ãµï¿½Ôªï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ï¿½
+        col.getColumn(0).setCellRenderer(new ImageRender());
+
+        col.getColumn(0).setPreferredWidth(55);   //[1] ï¿½ï¿½ 0 ï¿½ï¿½
+        col.getColumn(1).setPreferredWidth(210);  //[2] ï¿½ï¿½ 1 ï¿½ï¿½
+
+        col.getColumn(2).setPreferredWidth(0);
+        col.getColumn(2).setMaxWidth(0);   //[1] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ..
+        col.getColumn(2).setMinWidth(0);   //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ..
+
+        table.setBounds(0, 66, 220, 600);
+        //table.setBackground( Color.DARK_GRAY );
+        add(table);
+
+        //-----------------------------------------------------------------------
+        setBounds(150, 150, 200, 750);
+        setResizable(false);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void showList(Map<String, User> users) {
+
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);   //[1] ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ..
+        //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½
+        Set<String> socketIds = users.keySet();
+        for (String socketId : socketIds) {
+            Vector<Object> rowData = new Vector<Object>();
+
+            User user = users.get(socketId);
+            ImageIcon head = ImageLoader.getImageIcon("face" + user.getImg() + ".jpg");
+            user.setHead(head);   //ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Í·ï¿½ï¿½  ..
+
+            rowData.add(head);    //ï¿½ï¿½ 0 ï¿½Ð·ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Í·ï¿½ï¿½ ..
+            rowData.add(user.getNickName());    //ï¿½ï¿½ 1 ï¿½Ð·ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ç³ï¿½ ..
+            rowData.add(socketId);
+
+            model.addRow(rowData);   //ï¿½ï¿½ï¿½ëµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½  ..
+        }
+    }
+
+    public void showMessage(String socketId, String message) {
+//		[1] ï¿½ï¿½ chats(Map) ï¿½Ð»ï¿½È¡ ChatFrame [ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï´ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾]ï¿½ï¿½
+        ChatFrame chatFrame = chats.get(socketId);
+//		[2] ï¿½ï¿½ï¿½ï¿½ callBack ï¿½ï¿½È¡  User ï¿½ï¿½ï¿½ï¿½
+        User user = callBack.getUser(socketId);
+//		[3] ï¿½ï¿½È¡ User ï¿½ï¿½ï¿½Ç³Æ¡ï¿½
+        String nickName = (user != null) ? user.getNickName() : "Î´Öªï¿½Ã»ï¿½";
+
+//		[4] ï¿½ï¿½ï¿½ ChatFrame ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½
+        if (chatFrame != null) {   //Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ ..
+            //[4]-1  ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Ê¾ï¿½ï¿½  ChatFrame ï¿½Ð¡ï¿½
+            chatFrame.addText(nickName, message);
+        } else {  //ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ê¾  ..
+            //[4-4] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ã»ï¿½Í·ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ---> ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ã»ï¿½ï¿½ï¿½
+            FlashTask task = fTasks.get(socketId);
+            if (task == null) {  //ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ---> È¥ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ ..
+                task = new FlashTask(user.getHead());   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                fTasks.put(socketId, task);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ fTask {Map}
+                Thread th = new Thread(task);
+                th.start();   //[4-7] ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½Ö´ï¿½ï¿½Ö® ..
+            }
+            appendToFile(socketId, message);   //[4-8] Ð´ï¿½ëµ½ï¿½Ä±ï¿½ (appendToFile) ..
+        }
+    }
+
+    //-------------------------- ï¿½ï¿½ï¿½ÚµÄ·ï¿½ï¿½ï¿½ ----------------------------------
+    //ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ï¢Ð´ï¿½ëµ½ï¿½Ä±ï¿½ï¿½ï¿½
+    //ï¿½ï¿½Ê½: ï¿½Ç³ï¿½,ï¿½ï¿½Ï¢,Ê±ï¿½ï¿½
+    //ï¿½ï¿½ e:\dir\ Îªï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½Îª: andy
+    private void appendToFile(String socketId, String msg) {
+        //[1] ï¿½È¿ï¿½ e:\dir\andy ï¿½Ç·ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½
+        //path: ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½, name: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½
+        File dir = new File(path + name);
+        if (!dir.exists()) {
+            dir.mkdirs();   //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ä¿Â¼ ..
+        }
+        //[2] ï¿½ï¿½È¡ socketId ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ç³Æ¡ï¿½
+        User user = callBack.getUser(socketId);
+        String nickName = (user != null) ? user.getNickName() : "Î´Öªï¿½Ã»ï¿½";
+        String time = getTime();   //[4] Í¨ï¿½ï¿½ getTime() ï¿½ï¿½È¡Ê±ï¿½ä¡£
+
+        //[3] ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½Ê½Ð´ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+        PrintWriter writer = null;
+        File file = new File(dir, socketId + ".txt");
+        try {
+            writer = new PrintWriter(new FileWriter(file, true));
+            writer.printf("%s,%s,%s\n", nickName, msg, time);  //ï¿½Ç³ï¿½,ï¿½ï¿½Ï¢,Ê±ï¿½ï¿½
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            writer.close();
+        }
+    }
+
+    public String getTime() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    //[Note] ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½Â¼ï¿½  ..
+    private void proccessClick(MouseEvent e) {
+        Point point = e.getPoint();
+        int rowIndex = table.rowAtPoint(point);
+
+        String nickName = (String) table.getModel().getValueAt(rowIndex, 1);
+        String socketId = (String) table.getModel().getValueAt(rowIndex, 2);
+
+        //[1] ï¿½ï¿½ chats ï¿½Ð»ï¿½È¡ ChatFrame
+        ChatFrame chatFrame = chats.get(socketId);
+        if (chatFrame != null) {   //[2] ï¿½ï¿½ï¿½ï¿½Ãµï¿½  chat ï¿½ò½«½ï¿½ï¿½ãµ½ Chat ï¿½Ï¡ï¿½
+            //[A1] chatFrame  ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½
+        } else {    //[B1] --> [ELSE] ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ chat ï¿½ï¿½ï¿½ï¿½
+            FlashTask task = fTasks.get(socketId);
+            if (task != null) {               //[B2] ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                task.stop = true;           //[B3] ï¿½ï¿½ task ï¿½ï¿½Í£Ö¹ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Îª  true ï¿½ï¿½
+                fTasks.remove(socketId);  //[B4] ï¿½ï¿½ Map ï¿½ï¿½ï¿½Æ³ï¿½ task ( ï¿½ï¿½ï¿½ï¿½ )ï¿½ï¿½
+            }
+            //[B5] ï¿½Â½ï¿½ ChatFrame ï¿½ï¿½ï¿½ï¿½, CallBack: ClientEngine
+            chatFrame = new ChatFrame(callBack, nickName, socketId);
+            //[B6] ï¿½ï¿½ï¿½ï¿½  readMsgFromText ï¿½ï¿½È¡ï¿½ï¿½Ï¢ï¿½ï¿½
+            LinkedList<String[]> list = readMsgFromText(socketId);
+            //[B7] ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ãµï¿½ chatFrame ï¿½Ð¡ï¿½
+            chatFrame.setText(list);
+            //[B8] ï¿½ï¿½ chatFrame ï¿½ï¿½ï¿½ëµ½ Map [chats] ï¿½Ð¡ï¿½
+            chats.put(socketId, chatFrame);
+        }
+    }
+
+    //path = e:\dir\
+    //name = andy
+    //socketId.txt
+    private LinkedList<String[]> readMsgFromText(String targetId) {
+        //[1] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½:
+        String _path = String.format("%s%s\\%s.txt", path, name, targetId);
+        File file = new File(_path);
+        LinkedList<String[]> list = new LinkedList<String[]>();
+        if (file.exists()) {   //[2] ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½È¥ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ ..
+            BufferedReader reader = null;
+            String line = null;
+            try {
+                reader = new BufferedReader(new FileReader(_path));
+                String[] arr = null;
+                while ((line = reader.readLine()) != null) {
+                    arr = line.split(",");
+                    list.add(arr);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    //--------------------------- ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---------------------------------
+    class ImageRender implements TableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object imgIcon, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            ImageIcon icon = (ImageIcon) imgIcon;
+            JLabel label = new JLabel(icon);
+            return label;
+        }
+    }
+
+    //[ï¿½Ú²ï¿½ï¿½ï¿½1] ï¿½ï¿½Ð´Ò»ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ TableAdapter
+    class TableAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                proccessClick(e);
+            }
+        }
+    }
+
+    class FlashTask implements Runnable {
+        //[1] ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½
+        ImageIcon head;
+        //[2] stop ï¿½ï¿½Ö¾ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Í£Ö¹Í·ï¿½ï¿½ï¿½ï¿½ï¿½Ë¸ ..
+        boolean stop = false;
+
+        public FlashTask(ImageIcon head) {
+            this.head = head;
+        }
+
+        @Override
+        public void run() {
+            Image srcImg = head.getImage();   //[1] Ô­Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ..
+            boolean flag = true;
+            while (!stop) {
+                if (flag) {
+                    head.setImage(emptyImg);
+                    flag = false;
+                } else {
+                    head.setImage(srcImg);
+                    flag = true;
+                }
+                delay();
+                table.updateUI();
+            }
+            head.setImage(srcImg);    //[2] ï¿½ï¿½×¡, ï¿½ï¿½ï¿½Ã»ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ ..
+        }
+
+        private void delay() {
+            try {
+                Thread.sleep(250);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    //--------------------------- ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [END] ---------------------------------
+
+    //--------------------------- ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---------------------------------
+    public DefaultTableModel makeModel() {
+        //[1] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·  [Table Header] ..
+        Vector<Object> headers = new Vector<Object>();
+        headers.add("ï¿½Ã»ï¿½Í·ï¿½ï¿½");
+        headers.add("ï¿½Ã»ï¿½ï¿½Ç³ï¿½");
+        headers.add("SocketId");
+        return new DefaultTableModel(headers, 0) {
+            //[PS] ï¿½Ñµï¿½Ôªï¿½ï¿½Ä±à¼­ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½Ê±, ï¿½ï¿½Ôªï¿½ï¿½Ä±à¼­×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½î¡£
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    public void removeChatFrame(String socketId) {
+        //[1] ï¿½ï¿½ Map [chats] ï¿½ï¿½ï¿½Æ³ï¿½  ChatFrame ï¿½ï¿½
+        chats.remove(socketId);
+    }
 
 }

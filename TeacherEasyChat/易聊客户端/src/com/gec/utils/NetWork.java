@@ -12,127 +12,130 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class NetWork {	
-	MsgCallBack callBack;
-	Map<String,Socket> userMap = Collections.synchronizedMap( 
-									new HashMap<String,Socket>() );
-	public NetWork(MsgCallBack callBack){
-		this.callBack = callBack;
-	}
-	public void startServer(int _port){
-		Runnable task = new Runnable(){
-			public void run(){
-				ServerSocket server = null;
-				try {
-					server = new ServerSocket( _port );
-					callBack.onCreatedServer( true );
-					while( true ){   //[¸Ä¶¯1] ²»¶ÏÈ¥ÕìÌý¿Í»§¶ËµÄÁ¬½Ó,  ÓöÒ»¸öÄÃÒ»¸ö¡£
-						Socket socket = server.accept();
-						String ip = socket.getInetAddress().getHostAddress();
-						System.out.println( "[NetWork] ÊÕµ½Ò»¸ö¿Í»§¶Ë: "+ ip );
-						callBack.onAccepted();	
-						proccess( socket );
-					}
-				}catch(IOException e){
-					callBack.onCreatedServer( false );
-				}
-			}
-		};
-		Thread th = new Thread(task);
-		th.start();
-	}
-	
-	//[PS] ¿Í»§¶Ë±ØÐëÄÃµ½×Ô¼ºµÄ SocketId, ÓÐÁË SocketId ¿ÉÒÔ´Ó Map ÖÐÈ¡³ö Socket¡£
-	public String startConnect(String _ip, int _port){
-		Callable<String> task = new Callable<String>(){
-			public String call() throws Exception {
-				String socketId = null;
-				Socket socket = null;
-				try{
-					socket = new Socket(_ip,_port);
-					callBack.onConnectEvent( true );
-					socketId = proccess( socket );
-				}catch(IOException e){
-					callBack.onConnectEvent( false );
-				}
-				return socketId;
-			}
-		};
-		FutureTask<String> ft = new FutureTask<String>(task);
-		Thread th = new Thread( ft );
-		th.start();
+public class NetWork {
+    MsgCallBack callBack;
+    Map<String, Socket> userMap = Collections.synchronizedMap(
+            new HashMap<String, Socket>());
 
-		String socketId = null;
-		try {
-			socketId = ft.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		return socketId;
-	}
+    public NetWork(MsgCallBack callBack) {
+        this.callBack = callBack;
+    }
 
-	private String proccess(Socket socket){
-		String socketId = null;
-		//[1] ²úÉúÒ»¸öËæ»úÊý: 10000  ÒÔÄÚ ----> String
-		int _ran = (int)(Math.random()*10000);
-		socketId = String.valueOf( _ran );
-		
-		System.out.println("[NetWork] socketId = "+ socketId );
-		//[2] °Ñ  [key-socket] ¼üÖµ¶Ô´æÈë  map Ó³Éäµ±ÖÐ¡£
-		userMap.put( socketId, socket );
-		
-		//[3] µ÷ÓÃ read() ·½·¨ ¡£
-		read( socketId );
-		return socketId;
-	}
-	private void read( String socketId ){
-		Runnable task = new Runnable(){
-			public void run(){
-				byte[] buff = new byte[1024];
-				int count = 0;
-				try{
-					Socket socket = userMap.get( socketId );
-					InputStream is = socket.getInputStream();
-					
-					//[1] ²»¶ÏµÄÈ¥¶Á is Á÷ÖÐµÄÊý¾Ý (Ñ­»·)¡£
-					while( true ){   //while Ã»ÓÐ´ÎÊý, Ã»ÓÐÊýÁ¿ÏÞÖÆ¡£(ÓÀÔ¶È¥×ö)
-						count = is.read( buff );
-						//[2] µ±¶Áµ½ÓÐÊý¾Ý, Í¨¹ý  callBack »Øµ÷ÏàÓ¦µÄ·½·¨¡£
-						if( count>0 ){
-							callBack.onReceived( buff, count, socketId );
-						}
-					}
-				}catch(IOException e){
-					//[3] µ±¶Ô·½, ±¾·½¶ÏÏßÁË, ¸æËßÉÏ²ãÓ¦ÓÃ¡£
-					callBack.onReceivedFailed();
-				}
-			}
-		};
-		//[3] ¿ªÒ»¸öÏß³ÌÀ´×öÒÔÉÏµÄÊÂÇé (ÄäÃûÄÚ²¿Àà)¡£
-		Thread th = new Thread( task );
-		th.start();
-	}
+    public void startServer(int _port) {
+        Runnable task = new Runnable() {
+            public void run() {
+                ServerSocket server = null;
+                try {
+                    server = new ServerSocket(_port);
+                    callBack.onCreatedServer(true);
+                    while (true) {   //[ï¿½Ä¶ï¿½1] ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½,  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+                        Socket socket = server.accept();
+                        String ip = socket.getInetAddress().getHostAddress();
+                        System.out.println("[NetWork] ï¿½Õµï¿½Ò»ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½: " + ip);
+                        callBack.onAccepted();
+                        proccess(socket);
+                    }
+                } catch (IOException e) {
+                    callBack.onCreatedServer(false);
+                }
+            }
+        };
+        Thread th = new Thread(task);
+        th.start();
+    }
 
-	public void send(String socketId, String content){
-		//[1] Í¨¹ý os À´·¢ËÍ   content ÖÐµÄÊý¾Ý¡£
-		Socket socket = userMap.get( socketId );
-		if( socket!=null ){
-			try {
-				OutputStream os = socket.getOutputStream();
-				os.write( content.getBytes() );
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else{
-			System.out.println("[NetWork] ÕÒ²»µ½¶ÔÓ¦µÄ Socket Ì×½Ó×Ö¡£");
-		}
-	}
-	
-	public void copySocket(String oldId, String newId){
-		Socket socket = userMap.get( oldId );
-		if( socket!=null ){
-			userMap.put( newId, socket );
-		}
-	}
+    //[PS] ï¿½Í»ï¿½ï¿½Ë±ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ SocketId, ï¿½ï¿½ï¿½ï¿½ SocketId ï¿½ï¿½ï¿½Ô´ï¿½ Map ï¿½ï¿½È¡ï¿½ï¿½ Socketï¿½ï¿½
+    public String startConnect(String _ip, int _port) {
+        Callable<String> task = new Callable<String>() {
+            public String call() throws Exception {
+                String socketId = null;
+                Socket socket = null;
+                try {
+                    socket = new Socket(_ip, _port);
+                    callBack.onConnectEvent(true);
+                    socketId = proccess(socket);
+                } catch (IOException e) {
+                    callBack.onConnectEvent(false);
+                }
+                return socketId;
+            }
+        };
+        FutureTask<String> ft = new FutureTask<String>(task);
+        Thread th = new Thread(ft);
+        th.start();
+
+        String socketId = null;
+        try {
+            socketId = ft.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return socketId;
+    }
+
+    private String proccess(Socket socket) {
+        String socketId = null;
+        //[1] ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 10000  ï¿½ï¿½ï¿½ï¿½ ----> String
+        int _ran = (int) (Math.random() * 10000);
+        socketId = String.valueOf(_ran);
+
+        System.out.println("[NetWork] socketId = " + socketId);
+        //[2] ï¿½ï¿½  [key-socket] ï¿½ï¿½Öµï¿½Ô´ï¿½ï¿½ï¿½  map Ó³ï¿½äµ±ï¿½Ð¡ï¿½
+        userMap.put(socketId, socket);
+
+        //[3] ï¿½ï¿½ï¿½ï¿½ read() ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        read(socketId);
+        return socketId;
+    }
+
+    private void read(String socketId) {
+        Runnable task = new Runnable() {
+            public void run() {
+                byte[] buff = new byte[1024];
+                int count = 0;
+                try {
+                    Socket socket = userMap.get(socketId);
+                    InputStream is = socket.getInputStream();
+
+                    //[1] ï¿½ï¿½ï¿½Ïµï¿½È¥ï¿½ï¿½ is ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ (Ñ­ï¿½ï¿½)ï¿½ï¿½
+                    while (true) {   //while Ã»ï¿½Ð´ï¿½ï¿½ï¿½, Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½(ï¿½ï¿½Ô¶È¥ï¿½ï¿½)
+                        count = is.read(buff);
+                        //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Í¨ï¿½ï¿½  callBack ï¿½Øµï¿½ï¿½ï¿½Ó¦ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½
+                        if (count > 0) {
+                            callBack.onReceived(buff, count, socketId);
+                        }
+                    }
+                } catch (IOException e) {
+                    //[3] ï¿½ï¿½ï¿½Ô·ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½Ó¦ï¿½Ã¡ï¿½
+                    callBack.onReceivedFailed();
+                }
+            }
+        };
+        //[3] ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½)ï¿½ï¿½
+        Thread th = new Thread(task);
+        th.start();
+    }
+
+    public void send(String socketId, String content) {
+        //[1] Í¨ï¿½ï¿½ os ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   content ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
+        Socket socket = userMap.get(socketId);
+        if (socket != null) {
+            try {
+                OutputStream os = socket.getOutputStream();
+                os.write(content.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("[NetWork] ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ Socket ï¿½×½ï¿½ï¿½Ö¡ï¿½");
+        }
+    }
+
+    public void copySocket(String oldId, String newId) {
+        Socket socket = userMap.get(oldId);
+        if (socket != null) {
+            userMap.put(newId, socket);
+        }
+    }
 
 }

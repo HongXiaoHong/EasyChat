@@ -27,99 +27,101 @@ import javax.swing.text.StyledDocument;
 import com.gec.controller.EngineCallBack;
 
 public abstract class AbstractChat extends JFrame {
-	
-	protected StyledDocument styDoc = new DefaultStyledDocument();
-	protected JTextPane txtPane;
-	protected JTextArea selfArea;
-	protected JButton btnSend;
-	
-	private JPanel makeTop(){
-		txtPane = new JTextPane( styDoc );
-		JScrollPane sclPane = new JScrollPane( txtPane );
-		txtPane.setEditable( false );
-		JPanel hisPanel = new JPanel( new BorderLayout() );
-		hisPanel.add( sclPane, BorderLayout.CENTER );
-		hisPanel.setPreferredSize( new Dimension(500,350) );
-		return hisPanel;
-	}
-	
-	private JPanel makeMsgPanel( JPanel bottomPanel ){
-		JPanel msgPanel = new JPanel( new BorderLayout(0,0) );
-		selfArea = new JTextArea();
-		selfArea.setFont( new Font( "SimSun", 0, 15 ) );
-		selfArea.setPreferredSize( new Dimension(500,100) );
-		selfArea.setBorder(new LineBorder( Color.GRAY, 1, false));
-		
-		msgPanel.add( selfArea, BorderLayout.CENTER );
-		msgPanel.add( bottomPanel, BorderLayout.SOUTH );
-		
-		msgPanel.setPreferredSize( new Dimension(500,150) );
-		return msgPanel;
-	}
-	
-	private JPanel makeBtnPanel(){
-		JPanel btnPanel = new JPanel();
-		btnSend = new JButton("·¢ËÍÏûÏ¢");
-		btnSend.setPreferredSize( new Dimension(92, 28) );
-		
-		JButton btnClose = new JButton("¹Ø±Õ´°¿Ú");
-		btnClose.setPreferredSize( new Dimension(92, 28) );
-		
-		btnPanel.setPreferredSize( new Dimension(500, 35) );
-		btnPanel.add( btnSend );
-		btnPanel.add( btnClose );
-		return btnPanel;
-	}
-	
-	private JPanel makeBottomPanel( JPanel btnPanel ){
-		JPanel bottomPanel = new JPanel( new BorderLayout(0,0) );
-		bottomPanel.setPreferredSize( new Dimension(500, 37) );
-		bottomPanel.add( btnPanel );
-		return btnPanel;
-	}
-	
-	protected void initViews(){
 
-		JPanel hisPanel = makeTop();
-		JPanel btnPanel = makeBtnPanel();
-		JPanel bottomPanel = makeBottomPanel( btnPanel );
-		JPanel msgPanel = makeMsgPanel( bottomPanel );
-		
-		JSplitPane jSpPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-								hisPanel, msgPanel);
-		jSpPane.setDividerLocation( 320 );   //ÉèÖÃ·Ö¸ôÌõµÄÎ»ÖÃ ...
-		setContentPane( jSpPane );
-		
-		//[PS] Content: ²¼¾Ö ..
-		setBounds( 500, 400, 500, 500 );
-		setResizable( false );
+    protected StyledDocument styDoc = new DefaultStyledDocument();
+    protected JTextPane txtPane;
+    protected JTextArea selfArea;
+    protected JButton btnSend;
+
+    private JPanel makeTop() {
+        txtPane = new JTextPane(styDoc);
+        JScrollPane sclPane = new JScrollPane(txtPane);
+        txtPane.setEditable(false);
+        JPanel hisPanel = new JPanel(new BorderLayout());
+        hisPanel.add(sclPane, BorderLayout.CENTER);
+        hisPanel.setPreferredSize(new Dimension(500, 350));
+        return hisPanel;
+    }
+
+    private JPanel makeMsgPanel(JPanel bottomPanel) {
+        JPanel msgPanel = new JPanel(new BorderLayout(0, 0));
+        selfArea = new JTextArea();
+        selfArea.setFont(new Font("SimSun", 0, 15));
+        selfArea.setPreferredSize(new Dimension(500, 100));
+        selfArea.setBorder(new LineBorder(Color.GRAY, 1, false));
+
+        msgPanel.add(selfArea, BorderLayout.CENTER);
+        msgPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        msgPanel.setPreferredSize(new Dimension(500, 150));
+        return msgPanel;
+    }
+
+    private JPanel makeBtnPanel() {
+        JPanel btnPanel = new JPanel();
+        btnSend = new JButton("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢");
+        btnSend.setPreferredSize(new Dimension(92, 28));
+
+        JButton btnClose = new JButton("ï¿½Ø±Õ´ï¿½ï¿½ï¿½");
+        btnClose.setPreferredSize(new Dimension(92, 28));
+
+        btnPanel.setPreferredSize(new Dimension(500, 35));
+        btnPanel.add(btnSend);
+        btnPanel.add(btnClose);
+        return btnPanel;
+    }
+
+    private JPanel makeBottomPanel(JPanel btnPanel) {
+        JPanel bottomPanel = new JPanel(new BorderLayout(0, 0));
+        bottomPanel.setPreferredSize(new Dimension(500, 37));
+        bottomPanel.add(btnPanel);
+        return btnPanel;
+    }
+
+    protected void initViews() {
+
+        JPanel hisPanel = makeTop();
+        JPanel btnPanel = makeBtnPanel();
+        JPanel bottomPanel = makeBottomPanel(btnPanel);
+        JPanel msgPanel = makeMsgPanel(bottomPanel);
+
+        JSplitPane jSpPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                hisPanel, msgPanel);
+        jSpPane.setDividerLocation(320);   //ï¿½ï¿½ï¿½Ã·Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ ...
+        setContentPane(jSpPane);
+
+        //[PS] Content: ï¿½ï¿½ï¿½ï¿½ ..
+        setBounds(500, 400, 500, 500);
+        setResizable(false);
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-		setVisible(true);
+        setVisible(true);
 
-		createStyle("Style01", styDoc, 15, Color.RED);
-	}
+        createStyle("Style01", styDoc, 15, Color.RED);
+    }
 
-	protected void insertText(StyledDocument styledDoc, String content, 
-			String style) {
-		try {
-			styledDoc.insertString( styledDoc.getLength(), content, 
-					styledDoc.getStyle(style) );
-		} catch (BadLocationException e) {
-			System.err.println("BadLocationException: " + e);
-		}
-	}
+    protected void insertText(StyledDocument styledDoc, String content,
+                              String style) {
+        try {
+            styledDoc.insertString(styledDoc.getLength(), content,
+                    styledDoc.getStyle(style));
+        } catch (BadLocationException e) {
+            System.err.println("BadLocationException: " + e);
+        }
+    }
 
-	private void createStyle(String styName, StyledDocument doc, 
-			int size, Color color) {
-		Style sys = StyleContext.getDefaultStyleContext()
-				.getStyle( StyleContext.DEFAULT_STYLE );
-		//[PS] ÏÈÉ¾³ýÕâÖÖ Style, ¼ÙÈçËû´æÔÚ¡£
-		try { doc.removeStyle(styName); }
-		catch (Exception e) { 	}
+    private void createStyle(String styName, StyledDocument doc,
+                             int size, Color color) {
+        Style sys = StyleContext.getDefaultStyleContext()
+                .getStyle(StyleContext.DEFAULT_STYLE);
+        //[PS] ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Style, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½
+        try {
+            doc.removeStyle(styName);
+        } catch (Exception e) {
+        }
 
-		Style sty = doc.addStyle(styName, sys);    //[1] ¼ÓÈëÑùÊ½µ½ÎÄµµ
-		StyleConstants.setFontSize(sty, size);     //[2] ÉèÖÃ×ÖÌå´óÐ¡
-		StyleConstants.setForeground(sty, color);  //[3] ÉèÖÃ×ÖÌåÑÕÉ«
-		StyleConstants.setAlignment(sty, StyleConstants.ALIGN_RIGHT);
-	}
+        Style sty = doc.addStyle(styName, sys);    //[1] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Äµï¿½
+        StyleConstants.setFontSize(sty, size);     //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
+        StyleConstants.setForeground(sty, color);  //[3] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
+        StyleConstants.setAlignment(sty, StyleConstants.ALIGN_RIGHT);
+    }
 }

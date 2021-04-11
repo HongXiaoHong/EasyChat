@@ -6,46 +6,47 @@ import com.gec.utils.Command;
 
 public class UserController {
 
-	UserDao userDao = new UserDao();
-	public Command register(User _user){
-		//[1] ÅÐ¶ÏÓÃ»§ÃûÔÚ²»ÔÚÊý¾Ý¿âµ±ÖÐ³öÏÖ¡£
-		User daoUser = userDao.getUser(_user, User.REGISTER);
-		Command command = null;
-		if( daoUser!=null ){   //[2] ÓÃ»§Ãû´æÔÚ , ²»¿ÉÒÔ×¢²á
-			System.out.println("[SERVER] ÓÃ»§Ãû´æÔÚ , ²»¿ÉÒÔ×¢²á¡£");
-			command = Command.makeUserReply("register", "no", _user);
-		}else{    //[3] ÓÃ»§Ãû²»´æÔÚ , ¿ÉÒÔ×¢²á
-			System.out.println("[SERVER] ÓÃ»§Ãû²»´æÔÚ , ¿ÉÒÔ×¢²á¡£");
-			boolean ret = userDao.addUser(_user);
-			if( ret ){
-				command = Command.makeUserReply("register", "yes", _user);
-			}else{
-				System.out.println("[UserController] Êý¾Ý¿âÐ´ÈëÊ§°Ü¡£");
-			}
-		}
-		return command;
-	}
+    UserDao userDao = new UserDao();
 
-	public Command login(User _user){
-		//[1] ÑéÖ¤  "ÓÃ»§Ãû" + "ÃÜÂë" ÔÚ²»ÔÚÊý¾Ý¿âµ±ÖÐ³öÏÖ¡£
-		User daoUser = userDao.getUser(_user, User.LOGIN);
-		Command command = null;
-		if( daoUser!=null ){    //´æÔÚ, µÇÂ½³É¹¦...
-			System.out.println("[SERVER] µÇÂ½³É¹¦  ...");
-			//[2] Ìî³äÍêÕû, ÐÎ²ÎÉÏ  _user µÄÐÅÏ¢¡£
-			//    _user Ô­ÓÐµÄÐÅÏ¢: name, pass, socketId
-			_user.setNickName( daoUser.getNickName() );    // [ Êý¾Ý¿âÖÐ»ñµÃ ]
-			_user.setMark( daoUser.getMark() );            // [ Êý¾Ý¿âÖÐ»ñµÃ ]
-			_user.setImg( daoUser.getImg() );              // [ Êý¾Ý¿âÖÐ»ñµÃ ]
-			
-			command = Command.makeUserReply("login", "yes", _user);
-		}else{   //²»´æÔÚÓÃ»§, µÇÂ½Ê§°Ü ...
-			System.out.println("[SERVER] µÇÂ½Ê§°Ü ...");
-			command = Command.makeUserReply("login", "no", _user);
-		}
-		return command;
-	}
-	
+    public Command register(User _user) {
+        //[1] ï¿½Ð¶ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿âµ±ï¿½Ð³ï¿½ï¿½Ö¡ï¿½
+        User daoUser = userDao.getUser(_user, User.REGISTER);
+        Command command = null;
+        if (daoUser != null) {   //[2] ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
+            System.out.println("[SERVER] ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½á¡£");
+            command = Command.makeUserReply("register", "no", _user);
+        } else {    //[3] ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
+            System.out.println("[SERVER] ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½×¢ï¿½á¡£");
+            boolean ret = userDao.addUser(_user);
+            if (ret) {
+                command = Command.makeUserReply("register", "yes", _user);
+            } else {
+                System.out.println("[UserController] ï¿½ï¿½ï¿½Ý¿ï¿½Ð´ï¿½ï¿½Ê§ï¿½Ü¡ï¿½");
+            }
+        }
+        return command;
+    }
+
+    public Command login(User _user) {
+        //[1] ï¿½ï¿½Ö¤  "ï¿½Ã»ï¿½ï¿½ï¿½" + "ï¿½ï¿½ï¿½ï¿½" ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿âµ±ï¿½Ð³ï¿½ï¿½Ö¡ï¿½
+        User daoUser = userDao.getUser(_user, User.LOGIN);
+        Command command = null;
+        if (daoUser != null) {    //ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½Â½ï¿½É¹ï¿½...
+            System.out.println("[SERVER] ï¿½ï¿½Â½ï¿½É¹ï¿½  ...");
+            //[2] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Î²ï¿½ï¿½ï¿½  _user ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+            //    _user Ô­ï¿½Ðµï¿½ï¿½ï¿½Ï¢: name, pass, socketId
+            _user.setNickName(daoUser.getNickName());    // [ ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ð»ï¿½ï¿½ ]
+            _user.setMark(daoUser.getMark());            // [ ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ð»ï¿½ï¿½ ]
+            _user.setImg(daoUser.getImg());              // [ ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ð»ï¿½ï¿½ ]
+
+            command = Command.makeUserReply("login", "yes", _user);
+        } else {   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½, ï¿½ï¿½Â½Ê§ï¿½ï¿½ ...
+            System.out.println("[SERVER] ï¿½ï¿½Â½Ê§ï¿½ï¿½ ...");
+            command = Command.makeUserReply("login", "no", _user);
+        }
+        return command;
+    }
+
 }
 
 
@@ -53,11 +54,10 @@ public class UserController {
 //User user = new User();
 //user.setName( "kk" );
 //user.setPass( "234" );
-//user.setNickName( "¿¨¿¨" );
-//user.setMark( "¿¨Î÷¿¨Î÷" );
+//user.setNickName( "ï¿½ï¿½ï¿½ï¿½" );
+//user.setMark( "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" );
 //user.setImg("1");
 //con.register( user );
-
 
 
 //UserController con = new UserController();

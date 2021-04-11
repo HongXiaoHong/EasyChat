@@ -12,62 +12,65 @@ import com.gec.controller.EngineCallBack;
 import com.gec.model.User;
 
 public class LoginFrame extends JFrame {
-	
-	JTextField name = new JTextField();
-	JTextField pass = new JTextField();
-	
-	private EngineCallBack callBack;
-	private boolean waitFlag;
-	public void setWaitFlag(boolean wait){ this.waitFlag = wait; }
-	
-	public void initViews(){
-		setBounds(100,150,500,450);  //ÉèÖÃ³ß´ç´óÐ¡ÓëÎ»ÖÃ
-		setLayout( null );
-		
-		JLabel jlbName = new JLabel("ÓÃ»§Ãû");
-		ImageIcon loginIcon = ImageLoader.getImageIcon("login.png");
-		JLabel btnLogin = new JLabel( loginIcon );
-		
-		name.setBounds( 125, 150, 150, 30);
-		pass.setBounds( 125, 190, 150, 30);
-		jlbName.setBounds(75,150,75,30);
-		btnLogin.setBounds(145, 220, 196, 32);
-		
-		add( name );   //Ìí¼Óµ½´°ÌåÉÏ
-		add( pass );   //Ìí¼Óµ½´°ÌåÉÏ
-		add( jlbName );
-		add( btnLogin );
-		
-		//[1] ¶ÔµÇÂ½°´Å¥Ìí¼ÓÒ»¸öµã»÷ÊÂ¼þ ..
-		btnLogin.addMouseListener( 
-			new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					if( !waitFlag ){     //Èç¹ûÄã²»´¦ÓÚµÈ´ýµÄ×´Ì¬, ¿ÉÒÔÈ¥Á¬½Ó·þÎñÆ÷
-						String _name = name.getText();
-						String _pass = pass.getText();
-						User user = new User();
-						user.setName( _name );
-						user.setPass( _pass );
-						callBack.doLogin( user );
-					}else{
-						System.out.println("[LoginFrame] ÕýÔÚÁ¬½Ó, ÇëÉÔµÈ ..");
-					}
-				}
-			}
-		);
-		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-		setVisible(true);   //Ê¹´°Ìå¿É¼û 
-	}
-	
-	//EngineCallBack: ½ÓÊÕµÄ¶ÔÏóÊÇ  ClientEngine
-	public LoginFrame(EngineCallBack callBack){
-		this.callBack = callBack;
-		initViews();
-	}
 
-	public void showMessage(String string) {
-		//--------------- [ ´ý¶¨ ] ---------------
-	}
-	
+    JTextField name = new JTextField();
+    JTextField pass = new JTextField();
+
+    private EngineCallBack callBack;
+    private boolean waitFlag;
+
+    public void setWaitFlag(boolean wait) {
+        this.waitFlag = wait;
+    }
+
+    public void initViews() {
+        setBounds(100, 150, 500, 450);  //ï¿½ï¿½ï¿½Ã³ß´ï¿½ï¿½Ð¡ï¿½ï¿½Î»ï¿½ï¿½
+        setLayout(null);
+
+        JLabel jlbName = new JLabel("ï¿½Ã»ï¿½ï¿½ï¿½");
+        ImageIcon loginIcon = ImageLoader.getImageIcon("login.png");
+        JLabel btnLogin = new JLabel(loginIcon);
+
+        name.setBounds(125, 150, 150, 30);
+        pass.setBounds(125, 190, 150, 30);
+        jlbName.setBounds(75, 150, 75, 30);
+        btnLogin.setBounds(145, 220, 196, 32);
+
+        add(name);   //ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        add(pass);   //ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        add(jlbName);
+        add(btnLogin);
+
+        //[1] ï¿½Ôµï¿½Â½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ ..
+        btnLogin.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (!waitFlag) {     //ï¿½ï¿½ï¿½ï¿½ã²»ï¿½ï¿½ï¿½ÚµÈ´ï¿½ï¿½ï¿½×´Ì¬, ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½
+                            String _name = name.getText();
+                            String _pass = pass.getText();
+                            User user = new User();
+                            user.setName(_name);
+                            user.setPass(_pass);
+                            callBack.doLogin(user);
+                        } else {
+                            System.out.println("[LoginFrame] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ôµï¿½ ..");
+                        }
+                    }
+                }
+        );
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);   //Ê¹ï¿½ï¿½ï¿½ï¿½É¼ï¿½
+    }
+
+    //EngineCallBack: ï¿½ï¿½ï¿½ÕµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½  ClientEngine
+    public LoginFrame(EngineCallBack callBack) {
+        this.callBack = callBack;
+        initViews();
+    }
+
+    public void showMessage(String string) {
+        //--------------- [ ï¿½ï¿½ï¿½ï¿½ ] ---------------
+    }
+
 }
