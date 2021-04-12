@@ -10,11 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /*
-��ͼƬ���ڵ�JLabelֱ�Ӽӵ���JPanel��,������ͼƬ,
-��ΪJPanel�Ĳ���Ĭ����������FlowLayout���Ի��п�϶.
-�������JPanel�Ĳ��ֶ���Ϊ�߽粼��BorderLayout,
-Ȼ���JLabel�ӵ��߽粼�ֵ�����BorderLayout.CENTER,
-��Ӧ��û�п�϶��.
+注册
  */
 public class Regist extends JFrame {
 
@@ -36,7 +32,7 @@ public class Regist extends JFrame {
 
     private ClientEnigine server;
 
-    Regist(final ClientEnigine server) {
+    public Regist(final ClientEnigine server) {
 
         this.server = server;
         ImageIcon hong = new ImageIcon("F:\\test\\images\\hong.jpg");

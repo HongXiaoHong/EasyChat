@@ -1,9 +1,10 @@
-package com.hong.view;
+package com.hong;
 
 import com.hong.controller.ClientEnigine;
 import com.hong.controller.EngineCallBack;
 import com.hong.model.User;
 import com.hong.utils.PathUtil;
+import com.hong.view.Regist;
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.border.StandardBorderPainter;
 import org.jvnet.substance.button.StandardButtonShaper;
@@ -14,11 +15,9 @@ import org.jvnet.substance.watermark.SubstanceBubblesWatermark;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
-public class Login extends JFrame {
+public class Main extends JFrame {
 
     private static ClientEnigine server = new ClientEnigine();
 
@@ -29,7 +28,7 @@ public class Login extends JFrame {
         this.waitFlag = wait;
     }
 
-    public Login() {
+    public Main() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(200, 200, 400, 400);
         setLayout(null);
@@ -56,41 +55,31 @@ public class Login extends JFrame {
         regist.setBounds(220, 240, 100, 40);
         regist.setFont(new Font("楷体", Font.BOLD, 15));
 
-        login.addActionListener(new ActionListener() {
+        login.addActionListener(e -> {
+            // 登录的动作
+            if (!waitFlag) {
+                String userName = user.getText();
+                String password = pass.getText();
+                User user1 = new User(userName, password);
+                server.connect("localhost", 1090);
+                server.doLogin(user1);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 登录的动作
-                if (!waitFlag) {
-                    String userName = user.getText();
-                    String password = pass.getText();
-                    User user = new User(userName, password);
-                    server.connect("localhost", 1090);
-                    server.doLogin(user);
-
-                } else {
-                    System.out.println("正在连接，请稍后");
-                }
-
-                //新加的
-                //---------------------------------------------
-
-                //---------------------------------------------
-
-
-                dispose();
+            } else {
+                System.out.println("正在连接，请稍后");
             }
 
+            //新加的
+            //---------------------------------------------
+
+            //---------------------------------------------
+
+
+            dispose();
         });
-        regist.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 注册的动作
-                Regist regist = new Regist(server);
-                dispose();
-            }
-
+        regist.addActionListener(e -> {
+            // 注册的动作
+            Regist regist1 = new Regist(server);
+            dispose();
         });
 
         add(userLabel);
@@ -113,13 +102,12 @@ public class Login extends JFrame {
             JDialog.setDefaultLookAndFeelDecorated(true);
             SubstanceLookAndFeel.setCurrentTheme(
                     new SubstanceTerracottaTheme());
-            //SubstanceComplexTheme  SubstanceTerracottaTheme
             SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
             SubstanceLookAndFeel.setCurrentButtonShaper(new StandardButtonShaper());
             SubstanceLookAndFeel.setCurrentWatermark(new SubstanceBubblesWatermark());
             SubstanceLookAndFeel.setCurrentBorderPainter(new StandardBorderPainter());
             SubstanceLookAndFeel.setCurrentGradientPainter(new StandardGradientPainter());
-            final Login client = new Login();
+            final Main client = new Main();
 
         } catch (UnsupportedLookAndFeelException e) {
 

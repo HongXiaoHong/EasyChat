@@ -8,14 +8,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 
 public class NetWork {
 
     MsgCallBack msg;
     //使用collections的同步方法将集合进行同步
     Map<String, Socket> userMap = Collections.synchronizedMap(
-            new HashMap<String, Socket>());
+            new HashMap<>());
 
     public NetWork(MsgCallBack msg) {
         this.msg = msg;
@@ -40,9 +40,7 @@ public class NetWork {
             return socketId;
         };
 
-        FutureTask<String> ft = new FutureTask<String>(task);
-        Thread th = new Thread(ft);
-        th.start();
+        Future<String> ft = TreadPoolUtils.submit(task);
 
         String socketId = null;
         try {
@@ -64,7 +62,7 @@ public class NetWork {
     }
 
     boolean read(final String socketId) {
-        (new Thread(() -> {
+        TreadPoolUtils.submit(() -> {
             int count = 0;
             byte[] buffer = new byte[1024];
             try {
@@ -80,8 +78,7 @@ public class NetWork {
                 msg.onReveiveFailed();
                 e.printStackTrace();
             }
-        })).start();
-
+        });
         return false;
     }
 

@@ -4,6 +4,7 @@ import com.hong.controller.ClientEnigine;
 import com.hong.controller.EngineCallBack;
 import com.hong.model.User;
 import com.hong.utils.PathUtil;
+import com.hong.utils.TreadPoolUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -146,8 +147,7 @@ public class ListFrame extends JFrame {
         if (fTasks.get(socketId) == null) {
             FlashTask task = new FlashTask(head);
             fTasks.put(socketId, task);
-            Thread th = new Thread(task);
-            th.start();
+            TreadPoolUtils.submit(task);
         }
     }
 

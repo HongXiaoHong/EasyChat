@@ -40,8 +40,7 @@ public class NetWork {
                 }
             }
         };
-        Thread th = new Thread(task);
-        th.start();
+        TreadPoolUtils.submit(task);
     }
 
     //[PS] �ͻ��˱����õ��Լ��� SocketId, ���� SocketId ���Դ� Map ��ȡ�� Socket��
@@ -60,9 +59,7 @@ public class NetWork {
                 return socketId;
             }
         };
-        FutureTask<String> ft = new FutureTask<String>(task);
-        Thread th = new Thread(ft);
-        th.start();
+        Future<String> ft = TreadPoolUtils.submit(task);
 
         String socketId = null;
         try {

@@ -10,102 +10,49 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 
 public class NetWork {
 
     MsgCallBack msg;
-    //ʹ��collections��ͬ�����������Ͻ���ͬ��
+    // 每个用户对应一个socket
     Map<String, Socket> userMap = Collections.synchronizedMap(
-            new HashMap<String, Socket>());
+            new HashMap<>());
 
     public NetWork(MsgCallBack msg) {
         this.msg = msg;
     }
 
-    //����������
+    // 开始服务
     public void startServer(final int port) {
-        //����������
+        ThreadPoolUtils.submit(() -> {
+            ServerSocket server = null;
+            try {
+                server = new ServerSocket(port);
+                msg.onCreateServer(true);
 
-        (new Thread() {
-            public void run() {
-                ServerSocket server = null;
-                try {
-                    server = new ServerSocket(port);
-                    msg.onCreateServer(true);
+                while (true) {// 监控链接
 
-                    while (true) {//���������Ͻ��ܿͻ��˵�����
-
-                        Socket socket = server.accept();
-                        String ip = socket.getInetAddress().getHostAddress();
-                        System.out.println("[NETWORK]�յ�һ���ͻ��ˣ�" + ip);
-                        msg.onAccepted();
-                        proccess(socket);
-                    }
-
-
-                } catch (IOException e) {
-
-                    msg.onCreateServer(false);
-                    e.printStackTrace();
-                    System.out.println("�ڷ������е������������յ����쳣��Ϣ��" + e.getMessage());
-                    throw new RuntimeException(e.getMessage());
-                } finally {
-
-                }
-            }
-        }).start();
-
-    }
-
-    //
-    public String startConnect(final String ip, final int port) {
-
-        Callable<String> task = new Callable<String>() {
-
-            @Override
-            public String call() throws Exception {
-                String socketId = null;
-
-                Socket socket = null;
-                try {
-                    socket = new Socket(ip, port);
-                    msg.OnConntextEvent(true);
-                    socketId = proccess(socket);
-                } catch (IOException e) {
-
-                    msg.OnConntextEvent(false);
-                    e.printStackTrace();
-                } finally {
-
+                    Socket socket = server.accept();
+                    String ip = socket.getInetAddress().getHostAddress();
+                    System.out.println("[NETWORK] IP地址：" + ip);
+                    msg.onAccepted();
+                    proccess(socket);
                 }
 
-                return socketId;
+
+            } catch (IOException e) {
+
+                msg.onCreateServer(false);
+                e.printStackTrace();
+                System.out.println("�ڷ������е������������յ����쳣��Ϣ��" + e.getMessage());
+                throw new RuntimeException(e.getMessage());
             }
-
-        };
-
-        FutureTask<String> ft = new FutureTask<String>(task);
-        Thread th = new Thread(ft);
-        th.start();
-
-        String socketId = null;
-        try {
-            socketId = ft.get();
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return socketId;
+        });
     }
+
 
     public String proccess(Socket socket) {
-        /*
-         *
-         */
-
-        //String socketId = UUID.randomUUID().toString();
         String socketId = null;
         try {
 
@@ -122,26 +69,22 @@ public class NetWork {
     }
 
     boolean read(final String socketId) {
-        (new Thread() {
-            public void run() {
-                int count = 0;
-                byte[] buffer = new byte[1024];
-                try {
-                    Socket socket = userMap.get(socketId);
-                    InputStream is = socket.getInputStream();
-                    while (true) {
-                        count = is.read(buffer);
-                        if (count > 0) {
-                            msg.onReceived(buffer, count, socketId);
-                        }
+        ThreadPoolUtils.submit(() -> {
+            int count = 0;
+            byte[] buffer = new byte[1024];
+            try {
+                Socket socket = userMap.get(socketId);
+                InputStream is = socket.getInputStream();
+                while (true) {
+                    count = is.read(buffer);
+                    if (count > 0) {
+                        msg.onReceived(buffer, count, socketId);
                     }
-                } catch (IOException e) {
-
-                    msg.onReveiveFailed(socketId);
                 }
+            } catch (IOException e) {
+                msg.onReveiveFailed(socketId);
             }
-        }).start();
-
+        });
         return false;
     }
 
@@ -157,12 +100,8 @@ public class NetWork {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("��NETWORK���Ҳ�����Ӧ��socket");
+            System.out.println("[NETWORK] 获取不到socket 无合适的socket可用");
         }
-    }
-
-    public MsgCallBack callBack() {
-        return msg;
     }
 
     public InetSocketAddress getAddress(String socketId) {
